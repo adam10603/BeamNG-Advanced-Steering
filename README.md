@@ -5,7 +5,7 @@
 ## Intro 🖊️
 
 
-This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. Unfortunately the default system is very simplistic and falls short of the necessary level of input processing seen in other driving games, resulting in an unrealistically difficult and frustrating driving experience.
+This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. Unfortunately the default system is very simplistic and falls short of the necessary level of input processing seen in other driving games, making the game needlessly difficult and frustrating.
 
 The idea to improve the game's steering system isn't new. [There have been discussions](https://www.beamng.com/threads/steering-assist-for-over-under-steerers.59477/) about it for a long time, as well as attempts to fix it such as the ["Forza" Steerig Mod](https://www.beamng.com/threads/forza-steering-for-keyboard-and-gamepad.77578/), or [IKT's script](https://gist.github.com/E66666666/207027cc29f1869a43f6ccef054e3845) that uses his GTA-style steering logic.
 
@@ -19,7 +19,7 @@ After seeing that others are just as frustrated with BeamNG.drive's barbaric inp
 
 Despite what it might sound like, you shouldn't think of this mod as some kind of artificial driver-aid. This is simply the normal way in which driving games (both arcade and sim) handle player input, and it simulates behaviors that cars in real life would exhibit.
 
-BeamNG.drive not having these by default is a huge detriment to the playability and feel of the game. Proper input processing like this drastically improves how cars feel to drive. At some point I might add a more detailed page explaining this further.
+BeamNG.drive not having these by default is a huge detriment to the playability and feel of the game. Proper input processing like this drastically improves how cars feel to drive.
 
 Here are two quick videos comparing the stock input system to the modified one:
 
@@ -35,7 +35,7 @@ https://user-images.githubusercontent.com/8660105/157831670-15eeaae5-520b-49ec-8
  2. Rename `input.lua` to something else. This serves as a backup of the original file, in case you want to restore it.
  3. Copy `input.lua` and `better_steering_config.json` from the mod's files to the `vehicle` directory.
 
-Since this mod replaces game files instead of using the game's modding API, updating the game may remove the modded files.
+Since this mod replaces game files instead of using the game's modding API, updating the game may remove these files.
 
 
 ## Setup 🛠
@@ -43,9 +43,9 @@ Since this mod replaces game files instead of using the game's modding API, upda
 
 Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind for ***Steering***. Make sure that the steering lock type is ***1:N***, and that the filter type matches the input device of the bind.
 
-The mod will not work with the ***Wheel (direct)*** filter (as it's only meant for keyboard and controller), but it does modify the behavior of the other filter types (for steering specifically).
+The mod will not work with the ***Wheel (direct)*** filter, as it's only meant for keyboard and controller. But for steering input specifically, it does modify the behavior of the other filter types.
 
-The ***Key (smooth)*** filter will lower the `steeringSpeed` and `inputAuthority` settings internally. The ***Key (fast)*** and ***Gamepad*** filters are identical, and both use the config values as-is.
+The ***Key (smooth)*** filter will lower the [`steeringSpeed`](ConfigGuide.md#steeringspeed) and `inputAuthority` settings internally. The ***Key (fast)*** and ***Gamepad*** filters are identical, and both use the config values as-is.
 
 Note that the ***Limit steering at speed*** option on the ***Filters*** tab will be ignored when the mod is active, as the mod uses its own logic to limit steering.
 
