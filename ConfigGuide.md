@@ -91,7 +91,7 @@ ___
 
 How fast the steering is. Note that even `1.0` is faster than the default input system's sluggish steering speed.
 
-![SteeringSpeed](https://i.imgur.com/LXJ8NBC.gif)
+![SteeringSpeed](https://i.imgur.com/jwTlKhm.gif)
 
 ___
 
