@@ -2,6 +2,8 @@
 
 This page explains all the settings found in `arcade_steering_config.json`. You can edit the file in notepad, or any code editor.
 
+If you make changes to the config file, press <kbd>Ctrl</kbd>+<kbd>R</kbd> in-game to reload your current vehicle. This applies your changes without having to restart the game.
+
 ___
 
 ### `enableCustomSteering`
