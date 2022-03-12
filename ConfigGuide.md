@@ -31,13 +31,13 @@ ___
 ### `counterForce.response`
 > Value: `0.0` - `1.0`
 
-Adjusts how much horizontal wheel velocity is needed for the car's natural countersteer to reach its maximum cap ([`maxAngle`](#maxAngle)).
+Adjusts how much horizontal wheel velocity is needed for the car's natural countersteer to reach its maximum cap ([`maxAngle`](#counterforcemaxangle)).
 
 Higher values will cause the countersteer force to act more aggressively, and max out even from smaller slides. This will fight harder to keep the car straight.
 
-Lower values will make the natural countersteer tendency more lazy and require more severe slides to reach [`maxAngle`](#maxAngle).
+Lower values will make the natural countersteer tendency more lazy and require more severe slides to reach [`maxAngle`](#counterforcemaxangle).
 
-A higher value may require [`damping`](#damping) to be increased as well.
+A higher value may require [`damping`](#counterforcedamping) to be increased as well.
 
 ___
 
@@ -48,7 +48,7 @@ ___
 
 The maximum steering angle that wheels are allowed to reach when deflected by the car's natural countersteer force.
 
-A higher value may require [`damping`](#damping) to be increased as well.
+A higher value may require [`damping`](#counterforcedamping) to be increased as well.
 
 ___
 
