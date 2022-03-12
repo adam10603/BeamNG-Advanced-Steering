@@ -155,7 +155,7 @@ end
 
 -- Custom steering variables
 
-local steeringCfg               = jsonReadFile("lua/vehicle/better_steering_config.json")
+local steeringCfg               = jsonReadFile("lua/vehicle/arcade_steering_config.json")
 local originalPhysicsStep       = onPhysicsStep -- hijacking that bitch for stable physics readings
 local physicsSmoothingWindow    = 40
 local counterFadeMinSpeed       = 5.0  -- km/h

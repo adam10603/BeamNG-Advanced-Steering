@@ -1,4 +1,4 @@
-# BeamNG.drive: Better Steering
+# BeamNG.drive: Arcade Steering
 ![Version](https://img.shields.io/badge/Version-1.0-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v24.1.2-green.svg)
 
 
@@ -32,10 +32,10 @@ https://user-images.githubusercontent.com/8660105/157831670-15eeaae5-520b-49ec-8
 
 ## Installation 🖥️
 
- 1. [Download the latest release.](https://github.com/adam10603/BeamNG-Better-Steering/releases)
+ 1. [Download the latest release.](https://github.com/adam10603/BeamNG-Arcade-Steering/releases)
  2. Navigate to the game's main directory, then go to `lua\vehicle`.
  3. Rename `input.lua` to something else. This will be a backup of the original file, if you ever want to restore it.
- 4. Copy the downloaded `input.lua` and `better_steering_config.json` files to the `vehicle` directory.
+ 4. Copy the downloaded `input.lua` and `arcade_steering_config.json` files to the `vehicle` directory.
 
 Since this mod replaces game files instead of using the game's modding API, updating the game may remove these files.
 

@@ -1,6 +1,6 @@
 # Configuration Guide
 
-This page explains all the settings found in `better_steering_config.json`. You can edit the file in notepad, or any code editor.
+This page explains all the settings found in `arcade_steering_config.json`. You can edit the file in notepad, or any code editor.
 
 ___
 
