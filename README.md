@@ -7,7 +7,7 @@
 
 This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. Unfortunately the default system is very simplistic and falls short of the level of input processing seen in other driving games. This mod provides a steering system that's more aware of the vehicle's underlying physics.
 
-This mod is work-in-progress, so it may be subject to changes and improvements in the near future.
+**This mod is work-in-progress**, so it may be subject to changes and improvements in the near future.
 
 Concerns around the game's default steering system aren't new. [There have been discussions](https://www.beamng.com/threads/steering-assist-for-over-under-steerers.59477/) about it for a long time, as well as attempts to improve it such as the ["Forza" Steering Mod](https://www.beamng.com/threads/forza-steering-for-keyboard-and-gamepad.77578/), or [IKT's script](https://gist.github.com/E66666666/207027cc29f1869a43f6ccef054e3845) that uses his GTA-style steering logic.
 
