@@ -128,7 +128,7 @@ The speed-related steering limit is continuously adjusted as the vehicle is turn
 
 The adjustment happens relatively slowly. This means that sudden things like bumps won't affect the steering limit much, but it will adapt to a corner for example.
 
-This value limits how much this feedback loop is able to adjust the steering limit. E.g. a value of `2.0` would allow the steering cap to be dynamically adjusted by +/- 2° of steering.
+This value limits how much this feedback loop is able to adjust the steering limit. E.g. a value of `1.0` would allow the steering cap to be dynamically adjusted by +/- 1° of steering.
 
 The reason this needs to be capped is to make sure the feedback loop doesn't change the steering feel more than necessary, especially if it encounters abnormal readings in edge cases, or unusual vehicles.
 
