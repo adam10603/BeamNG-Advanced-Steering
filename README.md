@@ -5,23 +5,21 @@
 ## Intro 🖊️
 
 
-This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. Unfortunately the default system is very simplistic and falls short of the necessary level of input processing seen in other driving games, making driving feel needlessly difficult and frustrating.
+This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. Unfortunately the default system is very simplistic and falls short of the level of input processing seen in other driving games. This mod provides a steering system that's more aware of the vehicle's underlying physics.
 
-Keep in mind that this mod is work-in-progress, so it may be subject to changes and improvements in the near future.
+This mod is work-in-progress, so it may be subject to changes and improvements in the near future.
 
-The idea to improve the game's steering system isn't new. [There have been discussions](https://www.beamng.com/threads/steering-assist-for-over-under-steerers.59477/) about it for a long time, as well as attempts to fix it such as the ["Forza" Steerig Mod](https://www.beamng.com/threads/forza-steering-for-keyboard-and-gamepad.77578/), or [IKT's script](https://gist.github.com/E66666666/207027cc29f1869a43f6ccef054e3845) that uses his GTA-style steering logic.
+Concerns around the game's default steering system aren't new. [There have been discussions](https://www.beamng.com/threads/steering-assist-for-over-under-steerers.59477/) about it for a long time, as well as attempts to improve it such as the ["Forza" Steerig Mod](https://www.beamng.com/threads/forza-steering-for-keyboard-and-gamepad.77578/), or [IKT's script](https://gist.github.com/E66666666/207027cc29f1869a43f6ccef054e3845) that uses his GTA-style steering logic.
 
-After seeing that others are just as frustrated with BeamNG.drive's barbaric input handling as I was, I decided to make a more polished and well-rounded mod to fix it. The main features of this mod include:
+After seeing that others are just as frustrated with BeamNG.drive's input handling as I was, I made a more well-rounded mod to overhaul it. The main features of this mod include:
 
  - Dynamic, slip angle-based steering limit
  - Ability to properly countersteer in a slide or drift
  - Forces acting on the steered wheels can feed back into the steering rack
- - Cars will naturally countersteer to an extent, simulating the effect of their caster angle
+ - Cars naturally countersteer to an extent, simulating the effect of their caster angle
  - Highly customizable config file
 
-Despite what it might sound like, you shouldn't think of this mod as some kind of artificial driver-aid. This is simply the normal way in which driving games (both arcade and sim) handle player input, and it reflects how driving in real life works too.
-
-BeamNG.drive not having these by default is a huge detriment to the playability and feel of the game. Proper input processing like this drastically improves how cars feel to drive.
+Despite what it might sound like, you shouldn't think of this mod as some kind of artificial driver-aid. This is a pretty common way in which driving games (both arcade and sim) handle player input, and it reflects how driving in real life works too.
 
 Here are two quick videos comparing the stock input system to the modified one:
 
@@ -59,7 +57,7 @@ When you first spawn a vehicle, an automatic steering calibration takes place. Y
 
 If you use a controller, don't be afraid to give 100% stick input to turn. You won't be grinding down the front tires like before, since the mod will ensure that the steering angle is appropriate. The same applies to keyboard input.
 
-There's not much else to it. Keep driving and you should notice that cars feel more well-behaved and predictable. Now that you don't have to fight a badly made input system, it will be easier to get a feel for what your car is doing.
+There's not much else to it. Keep driving and you should notice that cars feel more well-behaved and predictable. Now that the input system is more tied-in with the driving physics, it will be easier to get a feel for what your car is doing.
 
 
 ## [Config Guide 📝](ConfigGuide.md)
