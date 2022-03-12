@@ -1,0 +1,17 @@
+{
+    "enableCustomSteering": true,
+
+    "counterForce": {
+        "useSteeredWheels": true,
+        "response": 0.375,
+        "maxAngle": 8.0,
+        "inputAuthority": 0.35,
+        "damping": 0.6
+    },
+
+    "steeringSpeed": 1.0,
+    "relativeSteeringSpeed": true,
+    "slipTargetOffset": 1.5,
+    "maxAdaptiveLimitAdjustment": 1.0,
+    "logData": false
+}
