@@ -1,11 +1,13 @@
 # BeamNG.drive: Better Steering
-![Version](https://img.shields.io/badge/Version-1.0-blue.svg) ![Compatibility](https://img.shields.io/badge/BeamNG.drive_compatibility-v24.1.2-green.svg)
+![Version](https://img.shields.io/badge/Version-1.0-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v24.1.2-green.svg)
 
 
 ## Intro 🖊️
 
 
-This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. Unfortunately the default system is very simplistic and falls short of the necessary level of input processing seen in other driving games, making the game needlessly difficult and frustrating.
+This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. Unfortunately the default system is very simplistic and falls short of the necessary level of input processing seen in other driving games, making driving feel needlessly difficult and frustrating.
+
+Keep in mind that this mod is work-in-progress, so it may be subject to changes and improvements in the near future.
 
 The idea to improve the game's steering system isn't new. [There have been discussions](https://www.beamng.com/threads/steering-assist-for-over-under-steerers.59477/) about it for a long time, as well as attempts to fix it such as the ["Forza" Steerig Mod](https://www.beamng.com/threads/forza-steering-for-keyboard-and-gamepad.77578/), or [IKT's script](https://gist.github.com/E66666666/207027cc29f1869a43f6ccef054e3845) that uses his GTA-style steering logic.
 
@@ -17,7 +19,7 @@ After seeing that others are just as frustrated with BeamNG.drive's barbaric inp
  - Cars will naturally countersteer to an extent, simulating the effect of their caster angle
  - Highly customizable config file
 
-Despite what it might sound like, you shouldn't think of this mod as some kind of artificial driver-aid. This is simply the normal way in which driving games (both arcade and sim) handle player input, and it simulates behaviors that cars in real life would exhibit.
+Despite what it might sound like, you shouldn't think of this mod as some kind of artificial driver-aid. This is simply the normal way in which driving games (both arcade and sim) handle player input, and it reflects how driving in real life works too.
 
 BeamNG.drive not having these by default is a huge detriment to the playability and feel of the game. Proper input processing like this drastically improves how cars feel to drive.
 
@@ -32,7 +34,7 @@ https://user-images.githubusercontent.com/8660105/157831670-15eeaae5-520b-49ec-8
 
 
  1. Navigate to the game's main directory, then go to `lua\vehicle`.
- 2. Rename `input.lua` to something else. This serves as a backup of the original file, in case you want to restore it.
+ 2. Rename `input.lua` to something else. This will be a backup of the original file, if you ever want to restore it.
  3. Copy `input.lua` and `better_steering_config.json` from the mod's files to the `vehicle` directory.
 
 Since this mod replaces game files instead of using the game's modding API, updating the game may remove these files.
@@ -45,24 +47,31 @@ Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and
 
 The mod will not work with the ***Wheel (direct)*** filter, as it's only meant for keyboard and controller. But for steering input specifically, it does modify the behavior of the other filter types.
 
-The ***Key (smooth)*** filter will lower the [`steeringSpeed`](ConfigGuide.md#steeringspeed) and `inputAuthority` settings internally. The ***Key (fast)*** and ***Gamepad*** filters are identical, and both use the config values as-is.
+The ***Key (smooth)*** filter will lower the [`steeringSpeed`](ConfigGuide.md#steeringspeed) and [`inputAuthority`](ConfigGuide.md#counterforceinputauthority) settings internally. The ***Key (fast)*** and ***Gamepad*** filters are identical, and both use the config values as-is.
 
-Note that the ***Limit steering at speed*** option on the ***Filters*** tab will be ignored when the mod is active, as the mod uses its own logic to limit steering.
-
-
-## Config Guide 📝
-
-
-The default values in the config file work just fine, but if you want to customize the experience, refer to the full guide above.
-
-If you make changes to the config file, just press `Ctrl+R` in-game to reload your current vehicle. The changes will apply right away without restarting the game.
+The ***Limit steering at speed*** option on the ***Filters*** tab will be ignored when the mod is active, as the mod uses its own logic to limit steering.
 
 
 ## Usage 🎮
 
 
-When you first spawn a vehicle, an automatic steering calibration takes place. You won't be able to control the vehicle until it's over, but it only lasts about 1 second, so don't worry.
+When you first spawn a vehicle, an automatic steering calibration takes place. You won't be able to control the vehicle until it's over, but it only lasts about 1 second.
 
-If you use a controller, don't be afraid to give 100% stick input to turn. You won't be grinding down the front tires like before, since the mod will ensure that the steering angle is appropriate.
+If you use a controller, don't be afraid to give 100% stick input to turn. You won't be grinding down the front tires like before, since the mod will ensure that the steering angle is appropriate. The same applies to keyboard input.
 
-There's not much else to it. You should notice that it's easier to get a feel for what your car is doing, and cars should feel more well-behaved and predictable.
+There's not much else to it. Keep driving and you should notice that cars feel more well-behaved and predictable. Now that you don't have to fight a badly made input system, it will be easier to get a feel for what your car is doing.
+
+
+## [Config Guide 📝](ConfigGuide.md)
+
+
+The default values in the config file work just fine, but if you want to customize the experience, a full guide is linked above.
+
+If you make changes to the config file, press `Ctrl+R` in-game to reload your current vehicle. This applies your changes without having to restart the game.
+
+
+## Version History 📃
+
+
+* v1.0
+  * Initial release
