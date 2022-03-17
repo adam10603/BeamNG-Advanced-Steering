@@ -139,5 +139,5 @@ ___
 ### `logData`
 > Value: `true` / `false`
 
-If `true`, the mod prints steering-related information to the console as you drive.
+If `true`, the mod prints steering-related information to the console as you're driving.
 You can bring up the console with the <kbd>~</kbd> key.
