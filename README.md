@@ -42,7 +42,7 @@ Since the mod replaces game files instead of using the modding API, updating the
 ## Setup 🛠
 
 
-Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind for ***Steering***. Make sure that the steering lock type is ***1:N***, and that the filter type matches the input device of the bind.
+Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind for ***Steering***. Make sure that the steering lock type is ***1:N***, and that the filter type matches the input device that the bind is for.
 
 The mod will not work with the ***Wheel (direct)*** filter, as it's only meant for keyboard and controller. But for steering input specifically, it does modify the behavior of the other filter types.
 
@@ -58,7 +58,7 @@ When you first spawn a vehicle, an automatic steering calibration takes place. Y
 
 If you use a controller, don't be afraid to give 100% stick input to turn. You won't be grinding down the front tires like before, since the mod will ensure that the steering angle is appropriate. The same applies to keyboard input.
 
-That's pretty much it. Keep driving and you should notice that cars feel more well-behaved and predictable. Now that the input system is more tied-in with the driving physics, it will be easier to get a feel for what the car is doing.
+That's pretty much it. Keep driving and you should notice that cars feel more well-behaved and predictable. Now that the input system is more tied-in with the driving physics, it will be easier to get a feel for what your car is doing.
 
 
 ## [Config Guide 📝](ConfigGuide.md)
