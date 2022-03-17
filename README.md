@@ -9,7 +9,7 @@ This is an extensive modification of BeamNG.drive's steering input system for co
 
 **This mod is work-in-progress**, so it may be subject to changes and improvements in the near future.
 
-Concerns around the game's default steering system aren't new. [There have been discussions](https://www.beamng.com/threads/steering-assist-for-over-under-steerers.59477/) about it for a long time, as well as attempts to improve it such as the ["Forza" Steering Mod](https://www.beamng.com/threads/forza-steering-for-keyboard-and-gamepad.77578/), or [IKT's script](https://gist.github.com/E66666666/207027cc29f1869a43f6ccef054e3845) that uses his GTA-style steering logic.
+Concerns around the game's default steering system aren't new. [There have been discussions](https://www.beamng.com/threads/steering-assist-for-over-under-steerers.59477/) about it for a long time, as well as attempts to improve it like the ["Forza" Steering Mod](https://www.beamng.com/threads/forza-steering-for-keyboard-and-gamepad.77578/), or [IKT's script](https://gist.github.com/E66666666/207027cc29f1869a43f6ccef054e3845) that uses a GTA-style approach.
 
 After seeing that others are just as frustrated with BeamNG.drive's input handling as I was, I made a more well-rounded mod to overhaul it. The main features of this mod include:
 
@@ -19,7 +19,7 @@ After seeing that others are just as frustrated with BeamNG.drive's input handli
  - Cars naturally countersteer to an extent, simulating the effect of their caster angle
  - Highly customizable config file
 
-Despite what it might sound like, you shouldn't think of this mod as some kind of artificial driver-aid. This is a common way of processing steering input in racing games (both arcade and sim), and it also mimics real-life driving mechanics.
+Despite what it might sound like, you shouldn't think of this as some kind of artificial driver-aid. This is just a common way of processing steering input in racing games (both arcade and sim), and it mimics real-life driving mechanics.
 
 Here are two quick videos comparing the stock input system to the modified one:
 
