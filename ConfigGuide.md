@@ -9,7 +9,7 @@ ___
 ### `enableCustomSteering`
 > Value: `true` / `false`
 
-Enables or disables the entire mod. If this is `false`, the stock input system is used. It's a good way to do quickly compare the two systems.
+Enables or disables the entire mod. If this is `false`, the stock input system is used. It's a good way to quickly compare the two systems.
 
 ___
 
