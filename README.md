@@ -1,4 +1,4 @@
-## <span style="color:red">IMPORTANT: This mod has not yet been updated after the input system changes in 0.26, so I don't recommend using it until it's reworked. In the meantime I highly recommend the newly added "understeer asisst" and "oversteer assist" options instead, they achieve a similar effect. Read more [here](https://www.beamng.com/threads/arcade-steering-mod.85494/page-3#post-1506178).</span>
+## <span style="color:red">This mod has not yet been updated after the input system changes in 0.26, so I don't recommend using it until it's reworked. In the meantime I highly recommend the newly added "understeer asisst" and "oversteer assist" options instead, they achieve a similar effect. Read more [here](https://www.beamng.com/threads/arcade-steering-mod.85494/page-3#post-1506178).</span>
 
 
 # BeamNG.drive: Arcade Steering
