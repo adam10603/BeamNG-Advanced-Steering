@@ -24,6 +24,8 @@ Despite what it might sound like, you shouldn't think of this as some kind of ar
 ## Installation 🖥️
 
 
+If you're using the 1.0 version of the mod you should delete it and verify your game files in Steam. Starting with 2.0 the mod is a standard zip package that doesn't replace any existing game files.
+
  1. [Download the latest release](https://github.com/adam10603/BeamNG-Arcade-Steering/releases).
  2. Copy `arcadeSteering.zip` to your `mods` folder ([follow this guide](https://documentation.beamng.com/tutorials/mods/installing-mods/#manual-installation) if you don't know where it is).
  3. The mod should now appear in the in-game mod manager.
