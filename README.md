@@ -1,79 +1,72 @@
-## <font color="red">IMPORTANT: This mod has not yet been updated after the input system changes in 0.26, so I don't recommend using it until it's reworked. In the meantime I highly recommend the new "understeer asisst" and "oversteer assist" options instead, they achieve a similar effect. Read more [here](https://www.beamng.com/threads/arcade-steering-mod.85494/page-3#post-1506178).</font>
-
-
 # BeamNG.drive: Arcade Steering
-![Version](https://img.shields.io/badge/Version-1.0-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v24.1.3-green.svg)
+![Version](https://img.shields.io/badge/Version-2.0-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v26.2.0-green.svg)
 
 
 ## Intro 🖊️
 
 
-This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. Unfortunately the default system is very simplistic and falls short of the level of input processing seen in other driving games. This mod provides a steering system that's more aware of the vehicle's underlying physics.
+This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. It provides a steering system that's more aware of the vehicle's underlying physics and results in an improved steering feel.
 
-**This mod is work-in-progress**, so it may be subject to changes and improvements in the near future.
+Before the 0.26 game version, this mod added a very different approach to input processing compared to anything seen in the stock game. But with version 0.26 the developers added an ***Understeer reduction assistant*** and ***Oversteer reduction assistant*** setting, likely inspired by the first version of this mod. Those assists implement very similar concepts to this mod, and they are much better than the pre-0.26 situation. However, the default assists still aren't quite perfect IMO, so this mod now exists as a refinement of sorts.
 
-Concerns around the game's default steering system aren't new. [There have been discussions](https://www.beamng.com/threads/steering-assist-for-over-under-steerers.59477/) about it for a long time, as well as attempts to improve it like the ["Forza" Steering Mod](https://www.beamng.com/threads/forza-steering-for-keyboard-and-gamepad.77578/), or [IKT's script](https://gist.github.com/E66666666/207027cc29f1869a43f6ccef054e3845) that uses a GTA-style approach.
+The main features of the mod include:
 
-After seeing that others are just as frustrated with BeamNG.drive's input handling as I was, I made a more well-rounded mod to overhaul it. The main features of this mod include:
+ - Accurate steering limit to utilize the steered wheels' peak grip
+   - This is similar to the ***Understeer reduction assistant*** in 0.26+
+ - Natural countersteer tendency, simulating the effects of the car's caster angle
+   - This is similar to the ***Oversteer reduction assistant*** in 0.26+
+ - More refined steering feel compared to the stock assists
+ - Highly customizable settings
 
- - Dynamic, slip angle-based steering limit
- - Ability to properly countersteer in a slide or drift
- - Forces acting on the steered wheels can feed back into the steering rack
- - Cars naturally countersteer to an extent, simulating the effect of their caster angle
- - Highly customizable config file
-
-Despite what it might sound like, you shouldn't think of this as some kind of artificial driver-aid. This is just a common way of processing steering input in racing games (both arcade and sim), and it mimics real-life driving mechanics.
-
-Here are two quick videos comparing the stock input system to the modified one:
-
-https://user-images.githubusercontent.com/8660105/157807873-c8ed5bed-7ffe-406f-b707-58be0ca18f0b.mp4
-
-https://user-images.githubusercontent.com/8660105/158017373-47af5477-c2e6-4088-b352-6559f747ae3d.mp4
+Despite what it might sound like, you shouldn't think of this as some kind of artificial driver-aid. This is a common way of processing steering input in racing games (both arcade and sim), and it mimics real-life driving mechanics as well as behaviors you'll get when using a steering wheel with force-feedback.
 
 
 ## Installation 🖥️
 
 
- 1. [Download the latest release.](https://github.com/adam10603/BeamNG-Arcade-Steering/releases)
- 2. Navigate to the game's main directory, then go to `lua\vehicle`.
- 3. Rename `input.lua` to something else. This will be a backup of the original file, if you ever want to restore it.
- 4. Copy the downloaded `input.lua` and `arcade_steering_config.json` files to the `vehicle` directory.
-
-Since the mod replaces game files instead of using the modding API, updating the game may remove these files.
+ 1. [Download the latest release](https://github.com/adam10603/BeamNG-Arcade-Steering/releases) (click the ***Source code (zip)*** option).
+ 2. Copy the zip file to your `mods` folder ([follow this guide](https://documentation.beamng.com/tutorials/mods/installing-mods/#manual-installation) if you don't know where it is).
+ 3. The mod should now appear in the in-game mod manager.
 
 
 ## Setup 🛠
 
 
-Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind for ***Steering***. Make sure that the steering lock type is ***1:N***, and that the filter type matches the input device that the bind is for.
+Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind(s) for steering. Make sure that the ***Filter*** is set correctly (or use ***Automatic*** if unsure), and set the ***1:1 steering angle*** to 0 if you're using a controller.
 
-The mod will not work with the ***Wheel (direct)*** filter, as it's only meant for keyboard and controller. But for steering input specifically, it does modify the behavior of the other filter types.
+The mod will not do anything with the ***Wheel (direct)*** filter, as it's only meant for keyboard and controller. But for steering input specifically, it does modify the behavior of the other filter types.
 
-The ***Key (smooth)*** filter will lower the [`steeringSpeed`](ConfigGuide.md#steeringspeed) and [`inputAuthority`](ConfigGuide.md#counterforceinputauthority) settings internally. The ***Key (fast)*** and ***Gamepad*** filters are identical, and both use the config values as-is.
+The ***Key (smooth)*** filter will lower the [Steering speed](ConfigGuide.md#steering-speed) and [Input authority](ConfigGuide.md#input-authority) settings to 60% of their original value when you drive. This gives a smoother feel that's easier to control on keyboard. The ***Key (fast)*** and ***Gamepad*** filters are identical, and both use the config values as-is.
 
-The ***Limit steering at speed*** option on the ***Filters*** tab will be ignored when the mod is active, as the mod uses its own logic to limit steering.
-
+Any steering-related option in the game such as ***Understeer reduction assistant***, ***Oversteer reduction assistant***, ***Slower steering at high speed*** or ***Limit steering at high speed*** will not work as long as you're driving with this mod enabled. This is because the mod completely bypasses the default steering system and uses its own logic for everything.
 
 ## Usage 🎮
 
 
-When you first spawn a vehicle, an automatic steering calibration takes place. You won't be able to control the vehicle until it's over, but it only lasts about 1 second.
+When you first spawn a vehicle, an automatic steering calibration takes place. You won't be able to drive until it's over, but it only lasts about 1 second.
 
-If you use a controller, don't be afraid to give 100% stick input to turn. You won't be grinding down the front tires like before, since the mod will ensure that the steering angle is appropriate. The same applies to keyboard input.
-
-That's pretty much it. Keep driving and you should notice that cars feel more well-behaved and predictable. Now that the input system is more tied-in with the driving physics, it will be easier to get a feel for what your car is doing.
+That's pretty much it. Keep driving and you should notice a change in steering feel, and that cars feel more well-behaved and predictable. Things like drifting will also feel different.
 
 
 ## [Config Guide 📝](ConfigGuide.md)
 
 
-The default config will work just fine, but if you wish to customize things, see the full guide linked above.
+The default settings will work just fine for most people, but you can use the included UI app to tweak the settings to your taste.
 
-If you make changes to the config file, press <kbd>Ctrl</kbd>+<kbd>R</kbd> in-game to reload your current vehicle. This applies your changes without having to restart the game.
+Go to ***UI Apps*** in the top menu in-game, click ***Add app*** and look for ***Arcade Steering Config***. This widget will let you tweak the settings on the fly.
 
+Click the link above for a full breakdown of each setting in the app.
 
 ## Version History 📃
 
 
 * v1.0
   * Initial release
+* v2.0
+  * Big chungus of an update
+  * Works with 0.26 and up
+  * No longer requires modifying game files, it's packaged like a standard mod
+  * Added a UI app for tweaking settings on the fly
+  * Major changes to the steering limit logic
+  * Offroad steering has been improved (wasn't even considered previously)
+  * Numerous improvements and tweaks to basically everything

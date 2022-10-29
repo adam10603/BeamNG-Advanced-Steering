@@ -1,0 +1,24 @@
+{
+    "name": "Arcade Steering Config",
+    "author": "Adam",
+    "version": "2.0",
+    "description": "Settings for the Arcade Steering mod",
+    "directive": "arcadeSteering",
+    "types": [
+        "ui.apps.categories.vehicle_control"
+    ],
+    "domElement": "<arcade-steering></arcade-steering>",
+    "css": {
+        "top": "200px",
+        "left": "200px",
+
+        "min-width": "340px",
+        "width": "340px",
+        "max-width": "340px",
+
+        "min-height": "210px",
+        "height": "260px",
+        "max-height": "470px"
+    },
+    "preserveAspectRatio": false
+}

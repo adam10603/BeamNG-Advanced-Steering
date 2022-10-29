@@ -1,0 +1,127 @@
+.arcade-steering {
+    --footer-height: 40px;
+    --input-padding-left: 5px;
+    --ui-orange-color: #ff6600;
+
+    background-color: rgba(0, 0, 0, 0.6);
+
+    display: inherit;
+    width: 100%;
+    height: 100%;
+    padding: 6px;
+}
+
+.settings-container {
+    text-align: center;
+    height: calc(100% - var(--footer-height));
+    padding-right: 0px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.settings-container dl {
+    margin-top: 0;
+}
+
+.settings-container dt {
+    /* padding-left: 8px; */
+    background-color: rgba(0, 0, 0, 0.5);
+    margin-top: 0;
+}
+
+.settings-container dt:first-child h4 {
+    margin-top: 0;
+}
+
+.settings-container dt h4 {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.settings-container dd {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.input-line {
+    height: 1.25em;
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    justify-content: space-between;
+}
+
+input[type="checkbox"] {
+    width: 1.25em;
+    height: 1.25em;
+    margin-right: 0;
+}
+
+input[type="number"] {
+    background-color: black;
+    height: 1.25em;
+    width: 4.2em;
+    padding-left: var(--input-padding-left);
+    margin-right: 2px;
+}
+
+/* .input-line input[type="checkbox"]:checked {
+    background-color: #db600e;
+} */
+
+#reload-warning {
+    color: var(--ui-orange-color);
+    font-weight: bold;
+    justify-content: center !important;
+}
+
+.hidden {
+    display: none;
+}
+
+.footer-container {
+    height: var(--footer-height);
+    width: 100%;
+    background-color: rgba(0, 0, 0, 1);
+}
+
+.footer-buttons {
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.footer-buttons button {
+    color: white;
+    background-color: rgb(48, 48, 48);
+    border: none;
+    width: 102px;
+    height: 30px;
+    line-height: 0; /* Vertically centers text */
+}
+
+.footer-buttons button span {
+    display: inline-block;
+    transition: color 0.25s;
+}
+
+.footer-buttons button:hover {
+    background-color: rgb(64, 64, 64);
+}
+
+.input-container, .formatted-input-container {
+    position: relative;
+    user-select: none;
+}
+
+.formatted-input-container[altered-value]:before {
+    content: attr(altered-value);
+    position: absolute;
+    left: var(--input-padding-left);
+}
+
+.formatted-input-container[altered-value] input {
+    user-select: none;
+    color: rgba(0, 0, 0, 0);
+}
