@@ -24,8 +24,8 @@ Despite what it might sound like, you shouldn't think of this as some kind of ar
 ## Installation 🖥️
 
 
- 1. [Download the latest release](https://github.com/adam10603/BeamNG-Arcade-Steering/releases) (click the ***Source code (zip)*** option).
- 2. Copy the zip file to your `mods` folder ([follow this guide](https://documentation.beamng.com/tutorials/mods/installing-mods/#manual-installation) if you don't know where it is).
+ 1. [Download the latest release](https://github.com/adam10603/BeamNG-Arcade-Steering/releases).
+ 2. Copy `arcadeSteering.zip` to your `mods` folder ([follow this guide](https://documentation.beamng.com/tutorials/mods/installing-mods/#manual-installation) if you don't know where it is).
  3. The mod should now appear in the in-game mod manager.
 
 
