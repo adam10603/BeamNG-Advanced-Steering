@@ -1,0 +1,93 @@
+<div class="bngApp arcade-steering">
+    <link href="/ui/modules/apps/arcadeSteering/app.css" rel="stylesheet">
+    <div class="settings-container">
+        <!-- <h3>Arcade Steering config</h3> -->
+        <dl>
+            <dt><h4>General</h4></dt>
+            <dd>
+                <div class="input-line">
+                    <label>Enable Arcade Steering</label>
+                    <div class="input-container">
+                        <input id="cfg-enableCustomSteering" value="0" type="checkbox"/>
+                    </div>
+                </div>
+                <div id="reload-warning" class="input-line hidden">
+                    <label>Save and reload the car (Ctrl+R)!</label>
+                </div>
+                <div class="input-line">
+                    <label>Log data</label>
+                    <div class="input-container">
+                        <input id="cfg-logData" value="0" type="checkbox"/>
+                    </div>
+                </div>
+            </dd>
+            <dt><h4>Steering</h4></dt>
+            <dd>
+                <div class="input-line">
+                    <label>Steering speed</label>
+                    <div class="input-container">
+                        <input id="cfg-steeringSpeed" value="0" type="number" min="0" max="10" step="0.01"/>
+                    </div>
+                </div>
+                <div class="input-line">
+                    <label>Steering limit offset</label>
+                    <div class="formatted-input-container input-format-degree">
+                        <input id="cfg-steeringLimitOffset" value="0" type="number" min="-5" max="5" step="0.1"/>
+                    </div>
+                </div>
+                <div class="input-line">
+                    <label>Relative steering speed</label>
+                    <div class="input-container">
+                        <input id="cfg-relativeSteeringSpeed" value="0" type="checkbox"/>
+                    </div>
+                </div>
+            </dd>
+            <dt><h4>Countersteer force</h4></dt>
+            <dd>
+                <div class="input-line">
+                    <label>Use steered wheels</label>
+                    <div class="input-container">
+                        <input id="cfg-counterForce.useSteeredWheels" value="0" type="checkbox"/>
+                    </div>
+                </div>
+                <div class="input-line">
+                    <label>Response</label>
+                    <div class="input-container">
+                        <input id="cfg-counterForce.response" value="0" type="number" min="0" max="1" step="0.01"/>
+                    </div>
+                </div>
+                <div class="input-line">
+                    <label>Max angle</label>
+                    <div class="formatted-input-container input-format-degree">
+                        <input id="cfg-counterForce.maxAngle" value="0" type="number" min="0" max="90" step="0.1"/>
+                    </div>
+                </div>
+                <div class="input-line">
+                    <label>Relative angle</label>
+                    <div class="input-container">
+                        <input id="cfg-counterForce.relativeAngle" value="0" type="checkbox"/>
+                    </div>
+                </div>
+                <div class="input-line">
+                    <label>Input authority</label>
+                    <div class="input-container">
+                        <input id="cfg-counterForce.inputAuthority" value="0" type="number" min="0" max="1" step="0.01"/>
+                    </div>
+                </div>
+                <div class="input-line">
+                    <label>Damping</label>
+                    <div class="input-container">
+                        <input id="cfg-counterForce.damping" value="0" type="number" min="0" max="1" step="0.01"/>
+                    </div>
+                </div>
+            </dd>
+        </dl>
+    </div>
+    <div class="footer-container">
+        <div class="footer-buttons">
+            <button type="button" id="apply-button">✅ <span>Apply</span></button>
+            <button type="button" id="save-button">💾 <span>Save</span></button>
+            <button type="button" id="default-button">↩️ <span>Default</span></button>
+        </div>
+    </div>
+</div>
