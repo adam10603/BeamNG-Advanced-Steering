@@ -7,7 +7,7 @@
 
 This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. It provides a steering system that's more aware of the vehicle's underlying physics and results in an improved steering feel.
 
-Before the 0.26 game version, this mod added a very different approach to input processing compared to anything seen in the stock game. But with version 0.26 the developers added an ***Understeer reduction assistant*** and ***Oversteer reduction assistant*** setting, likely inspired by the first version of this mod. Those assists implement very similar concepts to this mod, and they are much better than the pre-0.26 situation. However, the default assists still aren't quite perfect IMO, so this mod now exists as a refinement of sorts.
+Before BeamNG version 0.26 this mod added a very different approach to input processing compared to the stock game. But with version 0.26 the developers added an ***Understeer reduction assistant*** and ***Oversteer reduction assistant*** setting, likely inspired by the first version of this mod. Those assists behave very similarly to this mod, and they are a big improvement over the pre-0.26 situation. However, the default assists still aren't quite perfect IMO, so this mod now exists as a refinement of sorts.
 
 The main features of the mod include:
 
