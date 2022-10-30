@@ -11,16 +11,16 @@ But if you want to fine tune the steering feel, you can do so in the included UI
 
 Enables or disables the entire mod. When disabled, the stock input system is used. It's a good way to quickly compare the two systems.
 
-Changing this will only take effect if you save your settings and reload the car with <kbd><font style="font-size:1.25em">Ctrl</font></kbd>+<kbd><font style="font-size:1.25em">R</font></kbd>.
+Changing this will only take effect if you save your settings and reload the car with <kbd>Ctrl</kbd>+<kbd>R</kbd>.
 
 ___
 
 ### Log data
 
 If enabled, the mod prints steering-related information to the console as you're driving.
-You can bring up the console with the <kbd><font style="font-size:1.25em">~</font></kbd> key.
+You can bring up the console with the <kbd>~</kbd> key.
 
-I suggest enabling force-scrolling with the <kbd><font style="font-size:1.25em">⤓</font></kbd> button in the top left of the console if you're using this.
+I suggest enabling force-scrolling with the <kbd>⤓</kbd> button in the top left of the console if you're using this.
 
 # Steering
 Settings related to regular steering input.
