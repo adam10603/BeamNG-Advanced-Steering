@@ -18,9 +18,9 @@ ___
 ### Log data
 
 If enabled, the mod prints steering-related information to the console as you're driving.
-You can bring up the console with the <kbd>~</kbd> key.
+You can bring up the console with the <kbd><font size="3em">~</font></kbd> key.
 
-I suggest enabling force-scrolling with the <kbd>⤓</kbd> button in the top left of the console if you're using this.
+I suggest enabling force-scrolling with the <kbd><font size="3em">⤓</font></kbd> button in the top left of the console if you're using this.
 
 # Steering
 Settings related to regular steering input.
