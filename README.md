@@ -7,7 +7,7 @@
 
 This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. It provides a steering system that's more aware of the vehicle's underlying physics and results in an improved steering feel.
 
-Before BeamNG version 0.26 this mod added a very different approach to input processing compared to the stock game. But with version 0.26 the developers added an ***Understeer reduction assistant*** and ***Oversteer reduction assistant*** setting, likely inspired by the first version of this mod. Those assists behave very similarly to this mod, and they are a big improvement over the pre-0.26 situation. However, the default assists still aren't quite perfect IMO, so this mod now exists as a refinement of sorts.
+With version 0.26 BeamNG added an ***Oversteer reduction assistant*** and ***Understeer reduction assistant*** which behave pretty similarly to this mod. In the past Arcade Steering used to add these mechanics because the stock game was completely lacking them before 0.26. Since 0.26 the mod now exists more as a refinement of sorts. The stock assists are a big improvement over the pre-0.26 situation, however, this mod still seeks to improve the steering feel further.
 
 The main features of the mod include:
 
@@ -18,7 +18,7 @@ The main features of the mod include:
  - More refined steering feel compared to the stock assists
  - Highly customizable settings
 
-Despite what it might sound like, you shouldn't think of this as some kind of artificial driver-aid. This is a common way of processing steering input in racing games (both arcade and sim), and it mimics real-life driving mechanics as well as behaviors you'll get when using a steering wheel with force-feedback.
+Despite what it might sound like, you shouldn't think of this as some kind of artificial driver-aid. This is a common way of processing steering input in racing games (both arcade and sim), and it mimics real-life driving mechanics as well as behaviors you'd get when using a steering wheel with force-feedback.
 
 
 ## Installation 🖥️
