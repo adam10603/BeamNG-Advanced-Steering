@@ -1,6 +1,7 @@
 # Configuration Guide
 
-The mod has a UI app you can use to tweak things. This page explains all the settings in the UI app.
+The default settings should be fine for most people, so you can just enjoy the mod without changing anything.
+But if you want to fine tune the steering feel, you can do so in the included UI app. This page explains all the settings in the UI app.
 
 ![UI App](https://i.imgur.com/9QktZO0.png)
 
