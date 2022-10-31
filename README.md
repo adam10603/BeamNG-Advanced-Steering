@@ -1,5 +1,5 @@
 # BeamNG.drive: Arcade Steering
-![Version](https://img.shields.io/badge/Version-2.0.2-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v26.2.0-green.svg)
+![Version](https://img.shields.io/badge/Version-2.0.1-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v26.2.0-green.svg)
 
 
 ## Intro 🖊️
@@ -72,6 +72,6 @@ Click the link above for a full breakdown of each setting in the app.
   * Major changes to the steering limit logic
   * Offroad steering has been improved (wasn't even considered previously)
   * Numerous improvements and tweaks to basically everything
-* v2.0.2
+* v2.0.1
   * Fixed a small bug in the steering logic when switching directions
   * Fixed a small bug in the UI app
