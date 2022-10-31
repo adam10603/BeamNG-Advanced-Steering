@@ -1042,21 +1042,17 @@ local function reloadVehicle()
 end
 
 local function displayDefaultSettings()
-    guihooks.trigger("arcadeSteeringSetDisplayedSettings", {defaultConfig, true})
+    guihooks.trigger("arcadeSteeringSetDisplayedSettings", { ["settings"] = defaultConfig, ["isDefault"] = true })
 end
 
 local function displayCurrentSettings()
-    guihooks.trigger("arcadeSteeringSetDisplayedSettings", {steeringCfg})
+    guihooks.trigger("arcadeSteeringSetDisplayedSettings", { ["settings"] = steeringCfg })
 end
 
 local function applySettings(jsonStr)
     local decoded = jsonDecode(jsonStr)
     if decoded then steeringCfg = decoded end
     guihooks.trigger("arcadeSteeringSettingsApplied", decoded and true or false)
-end
-
-local function resetSettingsGUI()
-    guihooks.trigger("arcadeSteeringResetSettingsGUI")
 end
 
 -- ======================== Hijacking original functions, injecting custom input processing
@@ -1070,7 +1066,6 @@ M.onExtensionLoaded = function()
 
     loadSettings()
     displayCurrentSettings()
-    resetSettingsGUI()
 
     if not steeringCfg["enableCustomSteering"] then return end
 
