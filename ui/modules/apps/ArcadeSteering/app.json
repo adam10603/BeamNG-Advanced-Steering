@@ -1,7 +1,7 @@
 {
     "name": "Arcade Steering Config",
     "author": "Adam",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "Settings for the Arcade Steering mod",
     "directive": "arcadeSteering",
     "types": [
