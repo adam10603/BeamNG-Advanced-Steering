@@ -35,6 +35,7 @@ The mod will not do anything with the ***Wheel (direct)*** filter, as it's only 
 The ***Key (smooth)*** filter will lower the [Steering speed](ConfigGuide.md#steering-speed) and [Input authority](ConfigGuide.md#input-authority) settings to 60% of their original value when you drive. This gives a smoother feel that's easier to control on keyboard. The ***Key (fast)*** and ***Gamepad*** filters are identical, and both use the config values as-is.
 
 Any steering-related option in the game such as ***Understeer reduction assistant***, ***Oversteer reduction assistant***, ***Slower steering at high speed*** or ***Limit steering at high speed*** will not work as long as you're driving with this mod enabled. This is because the mod completely bypasses the default steering system and uses its own logic for everything.
+
 ## Usage 🎮
 
 When you first spawn a vehicle, an automatic steering calibration takes place. You won't be able to drive until it's over, but it only lasts about 1 second.
