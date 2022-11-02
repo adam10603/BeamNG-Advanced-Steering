@@ -1,5 +1,5 @@
 # BeamNG.drive: Arcade Steering
-![Version](https://img.shields.io/badge/Version-2.0-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v26.2.0-green.svg)
+![Version](https://img.shields.io/badge/Version-2.0.1-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v26.2.0-green.svg)
 
 ## Intro 🖊️
 
@@ -20,11 +20,11 @@ Despite the "arcade" name, you shouldn't think of this as some kind of artificia
 
 ## Installation 🖥️
 
-If you're using the 1.0 version of the mod you should delete it and verify your game files in Steam. Starting with 2.0 the mod is a standard zip package that doesn't replace any existing game files.
+*If you're using the 1.0 version of the mod you should delete it and verify your game files in Steam. Starting with 2.0 the mod is a standard zip package that doesn't replace any existing game files.*
 
- 1. [Download the latest release](https://github.com/adam10603/BeamNG-Arcade-Steering/releases).
- 2. Copy `arcadeSteering.zip` to your `mods` folder ([follow this guide](https://documentation.beamng.com/tutorials/mods/installing-mods/#manual-installation) if you don't know where it is).
- 3. The mod should now appear in the in-game mod manager.
+The easiest way to get the mod is through the in-game mod repository. Just search for "Arcade Steering" and install it!
+
+In case you want the zip version, you can get that from the [BeamNG website](https://www.beamng.com/resources/arcade-steering.24284/) or the [releases](https://github.com/adam10603/BeamNG-Arcade-Steering/releases) section.
 
 ## Setup 🛠
 
