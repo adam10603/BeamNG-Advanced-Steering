@@ -128,6 +128,11 @@ local function angleBetween(vecA, vecB)
     return math.acos((vecA.x * vecB.x + vecA.y * vecB.y + vecA.z * vecB.z) / (vecA:length() * vecB:length()))
 end
 
+-- Returns the value if the sign of it matches the reference, or 0 otherwise
+local function signClampValue(val, signRef)
+    return (sign(val) == sign(guardZero(signRef))) and val or 0
+end
+
 -- SmoothTowards class
 
 local SmoothTowards = {}
@@ -820,9 +825,6 @@ local function processInput(e, dt)
     local rearSlipAngle        = math.deg((average(rearWheelData, fWheelSlipAngle) or 0))
     local rearSlipAngleAbs     = math.abs(rearSlipAngle)
 
-    -- 1 when trying to countersteer, 0 otherwise. Basically a boolean with smoothing to prevent an instant transition.
-    local isCountersteering = smoothstep(inputDirectionSpeedCap:getWithRate((sign(originalInput) ~= sign(avgRearWheelXVel) and originalInputAbs > 1e-10) and inverseLerpClamped(2, 8, rearSlipAngleAbs, 0, 1) or 0.0, dt, 5))
-
     -- ======================== Countersteer assist
 
     local wheelData           = steeringCfg["counterForce.useSteeredWheels"] and steeredWheelData or rearWheelData
@@ -864,12 +866,15 @@ local function processInput(e, dt)
         local _counterForce       = normalizedSteeringToInput(counterForce)
         local manualCounterCap    = inverseLerpClamped(0, math.max(steeringLockRad, math.rad(5)), math.abs(travelDirectionRad) + math.rad(6), 0, 1) -- // FIXME travel direction??
         manualCounterCap          = normalizedSteeringToInput(manualCounterCap)
-        manualCounterCap          = clamp01(manualCounterCap - ((sign(ival) == sign(_counterForce)) and math.abs(_counterForce) or 0)) -- // FIXME abs??
+        manualCounterCap          = clamp01(manualCounterCap - (sign(ival) * _counterForce))
         return manualCounterCap, _counterForce
     end
 
     local capInward, counterForceInward   = processInputInward()
     local capOutward, counterForceOutward = processInputCounter()
+
+    -- 1 when trying to countersteer, 0 otherwise. Basically a boolean with smoothing to prevent an instant transition.
+    local isCountersteering = smoothstep(inputDirectionSpeedCap:getWithRate((sign(originalInput) ~= sign(guardZero(avgRearWheelXVel)) and originalInputAbs > 1e-10) and inverseLerpClamped(3, 8, rearSlipAngleAbs, 0, 1) or 0.0, dt, 5))
 
     -- 0 if all steered wheels are offroad, otherwise 1. Only updated if all steered wheels are grounded
     local solidSurfaceVal = checkAllWheelsGrounded(steeredWheelData) and (checkAllWheelsOffroad(steeredWheelData) and 0 or 1) or lastSolidSurfaceVal
