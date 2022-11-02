@@ -49,7 +49,7 @@ ___
 
 If enabled, the steering speed will be adjusted to each vehicle's steering wheel lock. Vehicles that have a lot of steering wheel travel will have slower steering as a result. The default input system also does this.
 
-If disabled, all vehicles will have the same rate of input. Note that the steering hydro has a different speed cap in each vehicle, and this isn't change by the mod, so your mileage may still vary.
+If disabled, all vehicles will have the same rate of input. Note that the steering hydro has a different speed cap in each vehicle, and this isn't changed by the mod, so your mileage may still vary.
 
 ___
 
