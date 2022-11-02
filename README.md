@@ -5,7 +5,7 @@
 
 This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. It provides a steering system that's more aware of the vehicle's underlying physics and results in an improved steering feel.
 
-With version 0.26 BeamNG added an ***Oversteer reduction assistant*** and ***Understeer reduction assistant*** which behave pretty similarly to this mod. In the past Arcade Steering used to add these mechanics because the stock game was completely lacking them, but since 0.26 the mod now exists more as a refinement. The stock assists are a big improvement over the pre-0.26 situation, however, this mod still seeks to improve the steering feel further.
+With version 0.26 BeamNG has two options called ***Oversteer reduction assistant*** and ***Understeer reduction assistant*** which behave pretty similarly to this mod. In the past Arcade Steering used to add these mechanics because the stock game was lacking them, but since 0.26 the mod now exists more as a refinement. The stock assists are a big improvement over not having them at all, however, this mod still seeks to improve the steering feel further.
 
 The main features of the mod include:
 
@@ -49,19 +49,3 @@ The default settings will work just fine for most people, but you can use the in
 Go to ***UI Apps*** in the top menu in-game, click ***Add app*** and look for ***Arcade Steering Config***. This widget will let you tweak the settings on the fly.
 
 Click the link above for a full breakdown of each setting in the app.
-
-## Version History 📃
-
-* v1.0
-  * Initial release
-* v2.0
-  * Big chungus of an update
-  * Works with 0.26 and up
-  * No longer requires modifying game files, it's packaged like a standard mod
-  * Added a UI app for tweaking settings on the fly
-  * Major changes to the steering limit logic
-  * Offroad steering has been improved (wasn't even considered previously)
-  * Numerous improvements and tweaks to basically everything
-* v2.0.2
-  * Fixed a small bug in the steering logic when switching directions
-  * Fixed a small bug in the UI app
