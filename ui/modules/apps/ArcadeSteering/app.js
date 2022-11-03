@@ -7,8 +7,6 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
         link: function (scope, element, attrs, ctrl) {
             scope.rootElement = element[0];
 
-            let cfg = {};
-
             scope.buttons = {
                 applyButton:   null,
                 saveButton:    null,
@@ -18,6 +16,8 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
             scope.inputsByID = {};
             let allInputs    = scope.rootElement.querySelectorAll(".settings-container input");
             for (let em of allInputs) scope.inputsByID[em.id] = em;
+
+            scope.currentSettings = {};
 
             scope.masterToggle  = scope.rootElement.querySelector(".settings-container #cfg-enableCustomSteering");
             scope.reloadWarning = scope.rootElement.querySelector(".settings-container #reload-warning");
@@ -36,38 +36,44 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
                 }
             };
 
-            scope.updateGUIValues = () => {
-                for (let k in cfg) {
+            scope.updateGUIValues = (settings) => {
+                for (let k in settings) {
                     let inputEm = scope.inputsByID[`cfg-${k}`];
                     if (inputEm) {
-                        if (inputEm.type === "checkbox") inputEm.checked = cfg[k];
-                        else inputEm.value = cfg[k];
+                        if (inputEm.type === "checkbox") inputEm.checked = settings[k];
+                        else inputEm.value = settings[k];
                         scope.formatInput(inputEm);
                     }
                 }
             };
 
             scope.readSettingsFromGUI = () => {
+                let settings = {};
                 for (let k in scope.inputsByID) {
-                    let inputEm = scope.inputsByID[k];
-                    let val     = (inputEm.type === "checkbox") ? inputEm.checked : parseFloat(inputEm.value);
-                    let name    = inputEm.id.replace(/^cfg-/, "");
-                    cfg[name]   = val;
+                    let inputEm    = scope.inputsByID[k];
+                    let val        = (inputEm.type === "checkbox") ? inputEm.checked : parseFloat(inputEm.value);
+                    let name       = inputEm.id.replace(/^cfg-/, "");
+                    settings[name] = val;
                 }
+                return settings;
             };
 
             scope.applySettings = () => {
-                scope.readSettingsFromGUI();
-                bngApi.engineLua(scope.vehicleCommand(`arcadeSteering.applySettings('${JSON.stringify(cfg)}')`));
+                let settings = scope.readSettingsFromGUI();
+                bngApi.engineLua(scope.vehicleCommand(`arcadeSteering.applySettings('${JSON.stringify(settings)}')`));
             };
 
             scope.saveSettings = () => {
-                scope.readSettingsFromGUI();
-                bngApi.engineLua(scope.vehicleCommand(`arcadeSteering.saveSettings('${JSON.stringify(cfg)}')`));
+                let settings = scope.readSettingsFromGUI();
+                bngApi.engineLua(scope.vehicleCommand(`arcadeSteering.saveSettings('${JSON.stringify(settings)}')`));
             };
 
-            scope.loadDefaults = () => {
-                bngApi.engineLua(scope.vehicleCommand(`arcadeSteering.displayDefaultSettings()`));
+            scope.loadDefaultSettings = () => {
+                bngApi.engineLua(scope.vehicleCommand("arcadeSteering.displayDefaultSettings()"));
+            };
+
+            scope.loadCurrentSettings = () => {
+                bngApi.engineLua(scope.vehicleCommand("arcadeSteering.displayCurrentSettings()"));
             };
 
             scope.showFeedbackOnButton = (button, successText, success) => {
@@ -86,7 +92,7 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
             };
 
             scope.updateReloadWarning = () => {
-                if (scope.masterToggle.checked != cfg["enableCustomSteering"]) {
+                if (scope.masterToggle.checked != scope.currentSettings["enableCustomSteering"]) {
                     scope.reloadWarning.classList.remove("hidden");
                 } else {
                     scope.reloadWarning.classList.add("hidden");
@@ -109,11 +115,11 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
                 scope.buttons.applyButton.addEventListener("click", scope.applySettings);
 
                 scope.buttons.defaultButton = scope.rootElement.querySelector(".footer-buttons #default-button");
-                scope.buttons.defaultButton.addEventListener("click", scope.loadDefaults);
+                scope.buttons.defaultButton.addEventListener("click", scope.loadDefaultSettings);
 
                 scope.masterToggle.addEventListener("change", scope.updateReloadWarning);
 
-                bngApi.engineLua(scope.vehicleCommand("arcadeSteering.displayCurrentSettings()"));
+                scope.loadCurrentSettings();
             });
 
             scope.$on("arcadeSteeringSettingsApplied", (evt, success) => {
@@ -125,12 +131,9 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
             });
 
             scope.$on("arcadeSteeringSetDisplayedSettings", (evt, data) => {
-                cfg = data[0];
-                scope.updateGUIValues();
-                if (data[1]) scope.showFeedbackOnButton(scope.buttons.defaultButton, "Loaded!", true);
-            });
-
-            scope.$on("arcadeSteeringResetSettingsGUI", (evt) => {
+                if (data["isDefault"]) scope.showFeedbackOnButton(scope.buttons.defaultButton, "Loaded!", true);
+                else scope.currentSettings = data["settings"];
+                scope.updateGUIValues(data["settings"]);
                 scope.updateReloadWarning();
             });
         }

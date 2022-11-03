@@ -509,7 +509,7 @@ end
 
 local function getBestTurnRadius(vel, allWheelData, dt)
     local accel  = obj:getStaticFrictionCoef() * getDownforceFactor(allWheelData, math.ceil(#allWheelData * 0.501))
-    accel = radiusAccelSpeedCap:getUncapped(accel, dt)
+    accel        = radiusAccelSpeedCap:getUncapped(accel, dt)
     local radius = square(vel) / accel
     return clamp(radius, 0, 100000)
 end
@@ -766,11 +766,28 @@ end
 -- end
 
 -- Returns the steering limit as an input value (0-1)
-local function getSteeringLimit(vel, allWheelData, dt)
-    local radiusBest      = getBestTurnRadius(vel, allWheelData, dt)
-    local c               = math.sqrt(wheelbase * wheelbase + radiusBest * radiusBest) -- // FIXME use steered wheel pos or something instead of entire wheelbase
-    local beta            = math.asin(radiusBest / c)
-    local desiredLimitRad = (math.pi * 0.5) - beta + math.rad(4) + math.rad(steeringCfg["steeringLimitOffset"])
+local function getSteeringLimit(velLen, allWheelData, dt)
+    --  Top down view, car is going "up" on the screen, turning right
+    --
+    --  o---o
+    --  |car|
+    --  |   |      best turning radius
+    --  o---o ------------------------------X center of turning circle
+
+    --   |\
+    --   |β\
+    --   |  \
+    -- a |   \ c
+    --   |    \
+    --   |_____\
+    --      b
+
+    local a               = wheelbase
+    local b               = getBestTurnRadius(velLen, allWheelData, dt)
+    local c               = math.sqrt(a * a + b * b) -- // FIXME use steered wheel pos or something instead of entire wheelbase
+    local beta            = math.asin(b / c)
+    local desiredLimitRad = (math.pi * 0.5) - beta -- Steering angle at which the wheels' normal would point to the center of the turning circle
+    desiredLimitRad       = desiredLimitRad + math.rad(4) + math.rad(steeringCfg["steeringLimitOffset"]) -- Don't ask why but adding 4° gets the steering limit very close to ideal
 
     return normalizedSteeringToInput(clamp01(desiredLimitRad / steeringLockRad))
 end
@@ -877,12 +894,13 @@ local function processInput(e, dt)
     local isCountersteering = smoothstep(inputDirectionSpeedCap:getWithRate((sign(originalInput) ~= sign(guardZero(avgRearWheelXVel)) and originalInputAbs > 1e-10) and inverseLerpClamped(3, 8, rearSlipAngleAbs, 0, 1) or 0.0, dt, 5))
 
     -- 0 if all steered wheels are offroad, otherwise 1. Only updated if all steered wheels are grounded
-    local solidSurfaceVal = checkAllWheelsGrounded(steeredWheelData) and (checkAllWheelsOffroad(steeredWheelData) and 0 or 1) or lastSolidSurfaceVal
-    lastSolidSurfaceVal   = solidSurfaceVal
+    local solidSurfaceVal       = checkAllWheelsGrounded(steeredWheelData) and (checkAllWheelsOffroad(steeredWheelData) and 0 or 1) or lastSolidSurfaceVal
+    lastSolidSurfaceVal         = solidSurfaceVal
+    local smoothSolidSurfaceVal = smoothstep(surfaceChangeSpeedCap:get(solidSurfaceVal, dt))
 
     -- Steering limit that will be applied. Will be 1 if the vehicle is on an offroad surface
-    local effectiveCap    = lerp(capInward, capOutward, isCountersteering)
-    effectiveCap          = lerp(1, effectiveCap, smoothstep(surfaceChangeSpeedCap:get(solidSurfaceVal, dt)))
+    local effectiveCap = lerp(capInward, capOutward, isCountersteering)
+    effectiveCap       = lerp(1, effectiveCap, smoothSolidSurfaceVal)
 
     -- Countersteer force that will be applied
     local effectiveCounterForce = lerp(counterForceInward, counterForceOutward, isCountersteering)
@@ -891,28 +909,9 @@ local function processInput(e, dt)
     local finalAssistedInput = clamp(ival * effectiveCap + effectiveCounterForce, e.minLimit, e.maxLimit)
     ival = lerp(ival, finalAssistedInput, fadeIn)
 
-    -- if fadeIn > 1e-10 then
-    --     for i = 0, wheels.wheelCount - 1, 1 do
-    --         obj.debugDrawProxy:drawNodeSphere(wheels.wheels[i].node1, 0.1, color(255, 0, 0))
-    --         obj.debugDrawProxy:drawNodeSphere(wheels.wheels[i].node2, 0.1, color(0, 0, 255))
-    --     end
-    -- end
-
-    -- if fadeIn > 1e-10 then
-    --     obj.debugDrawProxy:drawCylinder(
-    --         vehicleTransform:pointToWorld(vec3(0, 0, 2)),
-    --         vehicleTransform:pointToWorld(vec3(0, 0, 2) + vec3(1, 0, 0) * (-yawAngularVel)),
-    --         0.1,
-    --         color(0, 0, 255)
-    --     )
-
-    --     obj.debugDrawProxy:drawCylinder(
-    --         vehicleTransform:pointToWorld(vec3(0, 0, 1.8)),
-    --         vehicleTransform:pointToWorld(vec3(0, 0, 1.8) + vec3(1, 0, 0) * (-stablePhysicsData.yawAngularVel.values[stablePhysicsData.yawAngularVel:count()])),
-    --         0.1,
-    --         color(255, 0, 0)
-    --     )
-    -- end
+    -- Debug draw calls
+    -- obj.debugDrawProxy:drawNodeSphere(NODE, RADIUS, color(R, G, B))
+    -- obj.debugDrawProxy:drawCylinder(FROM, TO, RADIUS, color(R, G, B))
 
     if steeringCfg["logData"] and localHVelKmh > 2 then
         print("====================================")
@@ -1042,21 +1041,17 @@ local function reloadVehicle()
 end
 
 local function displayDefaultSettings()
-    guihooks.trigger("arcadeSteeringSetDisplayedSettings", {defaultConfig, true})
+    guihooks.trigger("arcadeSteeringSetDisplayedSettings", { ["settings"] = defaultConfig, ["isDefault"] = true })
 end
 
 local function displayCurrentSettings()
-    guihooks.trigger("arcadeSteeringSetDisplayedSettings", {steeringCfg})
+    guihooks.trigger("arcadeSteeringSetDisplayedSettings", { ["settings"] = steeringCfg })
 end
 
 local function applySettings(jsonStr)
     local decoded = jsonDecode(jsonStr)
     if decoded then steeringCfg = decoded end
     guihooks.trigger("arcadeSteeringSettingsApplied", decoded and true or false)
-end
-
-local function resetSettingsGUI()
-    guihooks.trigger("arcadeSteeringResetSettingsGUI")
 end
 
 -- ======================== Hijacking original functions, injecting custom input processing
@@ -1070,7 +1065,6 @@ M.onExtensionLoaded = function()
 
     loadSettings()
     displayCurrentSettings()
-    resetSettingsGUI()
 
     if not steeringCfg["enableCustomSteering"] then return end
 

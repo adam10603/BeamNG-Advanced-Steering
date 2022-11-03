@@ -3,15 +3,15 @@
     "resource_id": 24284,
     "current_version_id": 42361,
     "download_count": 0,
-    "resource_version_id": 42361,
-    "version_string": "2.0.1",
-    "last_update": 1667163108,
-    "rating_avg": 0,
+    "resource_version_id": 42406,
+    "version_string": "2.0.2",
+    "last_update": 1667383346,
+    "rating_avg": 5,
     "rating_count": 0,
     "rating_sum": 0,
     "resource_category_id": 7,
-    "resource_date": 1667163108,
-    "review_count": 0,
+    "resource_date": 1667383346,
+    "review_count": 3,
     "tag_line": "An overhaul of the steering input system for controller and keyboard.",
     "update_count": 0,
     "path": "MPRB2QXY3\/42361\/",
@@ -20,10 +20,10 @@
     "user_id": 474788,
     "username": "lmaoxd",
     "tagid": "MPRB2QXY3",
-    "message": "[B][I]\nThis is an extensive modification of BeamNG.drive's steering input system for controller and keyboard players.[\/I][\/B]\n\n[CENTER][IMG]https:\/\/i.imgur.com\/CGhkVZe.png[\/IMG][\/CENTER]\n\nThe main features include:\n[LIST]\n[*]Accurate steering limit to utilize the steered wheels' peak grip\n[LIST]\n[*]This is similar to the [I]Understeer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]Natural countersteer tendency, simulating the effects of the car's caster angle\n[LIST]\n[*]This is similar to the [I]Oversteer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]More refined steering feel compared to the stock assists\n[*]Highly customizable settings\n[\/LIST]\nOverall this mod makes the steering tied more closely to the car's underlying physics which makes driving (including drifting or offroading) feel more predictable and fun when playing on controller or keyboard.\n\nThe mod includes a UI app called [I]Arcade Steering Settings[\/I] which lets you fine tune the steering feel to your liking, although the default settings should be fine for most people.\n\n[CENTER][IMG]https:\/\/i.imgur.com\/9QktZO0.png[\/IMG][\/CENTER]\n\nFor more info you can check out the project's [URL='https:\/\/github.com\/adam10603\/BeamNG-Arcade-Steering'][B][U]Github page[\/U][\/B][\/URL] which also includes a [URL='https:\/\/github.com\/adam10603\/BeamNG-Arcade-Steering\/blob\/main\/ConfigGuide.md'][B][U]configuration guide[\/U][\/B][\/URL] explaining all the settings, or you can visit the [URL='https:\/\/www.beamng.com\/threads\/arcade-steering-mod.85494\/'][B][U]forum thread[\/U][\/B][\/URL] where this mod was first released before being on the mod repository.\n\nHave fun!",
+    "message": "[B][I]\nThis is an extensive modification of BeamNG.drive's steering input system for controller and keyboard players.[\/I][\/B]\n\n[CENTER][IMG]https:\/\/i.imgur.com\/CGhkVZe.png[\/IMG][\/CENTER]\n\nArcade Steering makes the steering more closely tied to the car's underlying physics which makes driving (including drifting or offroading) feel more predictable and fun when playing on controller or keyboard.\n\nThe main features include:\n[LIST]\n[*]Accurate steering limit to utilize the steered wheels' peak grip\n[LIST]\n[*]This is similar to the [I]Understeer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]Natural countersteer tendency, simulating the effects of the car's caster angle\n[LIST]\n[*]This is similar to the [I]Oversteer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]More refined steering feel compared to the stock assists\n[*]Highly customizable settings\n[\/LIST]\nDespite the \"arcade\" name this isn't an unrealistic or artificial driver-aid. The mod mimics how the steering would behave on real cars, and also what you would experience with a force-feedback wheel in a game with decent force-feedback.\n\nThe mod includes a UI app called [I]Arcade Steering Settings[\/I] which lets you fine tune the steering feel to your liking, although the default settings should be fine for most people.\n\n[CENTER][IMG]https:\/\/i.imgur.com\/9QktZO0.png[\/IMG][\/CENTER]\n\nFor more info you can check out the project's [URL='https:\/\/github.com\/adam10603\/BeamNG-Arcade-Steering'][B][U]Github page[\/U][\/B][\/URL] which also includes a [URL='https:\/\/github.com\/adam10603\/BeamNG-Arcade-Steering\/blob\/main\/ConfigGuide.md'][B][U]configuration guide[\/U][\/B][\/URL] explaining all the settings, or you can visit the mod's [URL='https:\/\/www.beamng.com\/threads\/arcade-steering-mod.85494\/'][B][U]forum thread[\/U][\/B][\/URL] for discussions.\n\nHave fun!",
     "category_title": "",
     "prefix_title": "",
-    "via": "packed by repo on Sun, 30 Oct 2022 23:00:25 GMT",
+    "via": "packed by repo on Wed, 02 Nov 2022 15:01:27 GMT",
     "hashes": [
         [
             "scripts\/arcadeSteering\/modScript.lua",
@@ -31,11 +31,11 @@
         ],
         [
             "lua\/vehicle\/extensions\/auto\/arcadeSteering\/arcadeSteering.lua",
-            "63f10afa7fe78875"
+            "4c9b636be242e1db"
         ],
         [
             "ui\/modules\/apps\/ArcadeSteering\/app.js",
-            "843246774d8edc9b"
+            "710f2698a6e45663"
         ],
         [
             "ui\/modules\/apps\/ArcadeSteering\/app.css",
@@ -51,7 +51,7 @@
         ],
         [
             "ui\/modules\/apps\/ArcadeSteering\/app.json",
-            "58af372093e42450"
+            "87729f9082b13510"
         ]
     ]
 }
