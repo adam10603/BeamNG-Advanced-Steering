@@ -1,5 +1,5 @@
 # BeamNG.drive: Arcade Steering
-![Version](https://img.shields.io/badge/Version-2.0.2-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v26.2.0-green.svg)
+![Version](https://img.shields.io/badge/Version-2.1-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v26.2.0-green.svg)
 
 ## Intro 🖊️
 
