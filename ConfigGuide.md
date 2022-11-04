@@ -59,11 +59,11 @@ These settings affect how the car's natural countersteer tendency behaves. Manua
 
 ### Use steered wheels
 
-If enabled, the car's own countersteer force will be based on the forces experienced by the steered wheels (usually the front wheels).
+If enabled, the car's own countersteer force will be based on the forces at the steered wheels (usually the front wheels).
 
 If disabled, forces will be measured at the rear wheels (regardless if they are steered).
 
-Changing this can have an effect on stability. Basing the countersteer force on the steered wheels is more realistic (since those wheels are connected to the steering rack), however, this might make the car less stable at times. Taking the readings at the rear wheels is less realistic but can yield a more stable feel.
+Changing this can have an effect on stability. Basing the countersteer force on the steered wheels is more realistic but it might make the car less stable at times. Taking the readings at the rear wheels is less realistic but can yield a more stable feel.
 
 ___
 
@@ -89,12 +89,6 @@ A higher value may require [Damping](#damping) to be increased as well.
 
 ___
 
-### Relative angle
-
-If enabled, [Max angle](#max-angle) will be scaled based on the car's maximum steering angle. This means that cars with a low steering lock will countersteer less, and vice versa.
-
-___
-
 ### Input authority
 > Range: `0.0` - `1.0`
 
@@ -109,6 +103,8 @@ A higher value will give you more control, but at the risk of overworking the ti
 The effect is noticeable when trying to make a car slide just by turning inwards (not using weight shifting), or when trail braking into a turn with a car that tends to lose grip when doing so.
 
 Since this setting controls how the car's own countersteer force is mixed with your input, the difference it makes depends on the [Response](#response) and [Max angle](#max-angle) settings. The stronger you make the countersteer force, the more difference you'll notice when you change how it's mixed with your input.
+
+Starting with version 2.1, lowering this setting will internally increase the [Steering limit offset](#steering-limit-offset) setting slightly. This roughly compensates for the steering angle you lose when using low values here.
 
 When using the ***Key (smooth)*** input filter, this setting is reduced internally to 60% of its value.
 

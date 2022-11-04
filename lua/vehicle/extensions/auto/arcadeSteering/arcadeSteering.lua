@@ -123,9 +123,11 @@ local function clamp01(val)
     return clamp(val, 0, 1)
 end
 
--- Returns the angle between two vectors in radians.
-local function angleBetween(vecA, vecB)
-    return math.acos((vecA.x * vecB.x + vecA.y * vecB.y + vecA.z * vecB.z) / (vecA:length() * vecB:length()))
+-- Returns the angle between two vectors in radians. The lengths are optional, you can pass them in if you already have them.
+local function angleBetween(vecA, vecB, vecALen, vecBLen)
+    vecALen = vecALen or vecA:length()
+    vecBLen = vecBLen or vecB:length()
+    return math.acos((vecA.x * vecB.x + vecA.y * vecB.y + vecA.z * vecB.z) / (vecALen * vecBLen))
 end
 
 -- Returns the value if the sign of it matches the reference, or 0 otherwise
@@ -280,6 +282,8 @@ local steeringLockDeg           = 35 -- Default fallback value
 local wheelbase                 = 3.0
 local hardSurfaceTypes          = { METAL=1,PLASTIC=1,RUBBER=1,GLASS=1,WOOD=1,ASPHALT=1,ROCK=1,RUMBLE_STRIP=1,COBBLESTONE=1 } -- taken from game\lua\common\particles.json
 local hardSurfaceCache          = nil
+local offroadCapIncreaseDeg     = 14 -- How much extra steering to give on offroad surfaces
+local offroadCounterMult        = 0.5 -- Multiplies the strength of the automatic countersteer offroad. Helps with rally-style driving like throwing cars into a turn.
 
 -- =================== State (things that need to be reset)
 
@@ -328,8 +332,16 @@ local function getVehicleTransform()
     return Transform:new(-obj:getDirectionVector(), obj:getDirectionVectorUp(), obj:getPosition())
 end
 
+local function fWheelSmoothDownforce(wheelData)
+    return wheelData.downForce
+end
+
 local function fWheelDownforce(wheelData)
     return wheelData.rawDownforce
+end
+
+local function fWheelPressure(wheelData)
+    return wheelData.pressure
 end
 
 local function fWheelDownforceIfOnSolidSurface(wheelData)
@@ -393,15 +405,16 @@ local function getWheelData(wheelIndex, vehTransform, ignoreAirborne)
         return nil
     end
 
-    local node1Pos       = obj:getNodePositionRelative(wheels.wheels[wheelIndex].node1)
-    local node2Pos       = obj:getNodePositionRelative(wheels.wheels[wheelIndex].node2)
-    local normal         = (node2Pos - node1Pos):normalized()
-    local wFwdVec        = vehTransform:vecToWorld(normal:cross(vec3(0, 0, 1)):normalized() * wheels.wheels[wheelIndex].wheelDir)
-    local transform      = Transform:new(wFwdVec, vehTransform.upVec, vehTransform:pointToWorld(node1Pos * 0.5 + node2Pos * 0.5))
-    local velWorld       = stablePhysicsData.wheelVelocities[wheelIndex]:get() or vec3()
-    local velWheelSpc    = transform:vecToLocal(velWorld)
-    local velVehSpc      = vehTransform:vecToLocal(velWorld)
-    local hardSurfaceIDs = getHardSurfacesById()
+    local node1Pos        = obj:getNodePositionRelative(wheels.wheels[wheelIndex].node1)
+    local node2Pos        = obj:getNodePositionRelative(wheels.wheels[wheelIndex].node2)
+    local normal          = (node2Pos - node1Pos):normalized()
+    local wFwdVec         = vehTransform:vecToWorld(normal:cross(vec3(0, 0, 1)):normalized() * wheels.wheels[wheelIndex].wheelDir)
+    local transform       = Transform:new(wFwdVec, vehTransform.upVec, vehTransform:pointToWorld(node1Pos * 0.5 + node2Pos * 0.5))
+    local velWorld        = stablePhysicsData.wheelVelocities[wheelIndex]:get() or vec3()
+    local velWheelSpc     = transform:vecToLocal(velWorld)
+    local velVehSpc       = vehTransform:vecToLocal(velWorld)
+    local hardSurfaceIDs  = getHardSurfacesById()
+    -- local pressureGroupID = wheels.wheels[wheelIndex].pressureGroup
 
     return {
         index            = wheelIndex,
@@ -416,10 +429,11 @@ local function getWheelData(wheelIndex, vehTransform, ignoreAirborne)
         rawDownforce     = wheels.wheels[wheelIndex].downForceRaw,
         downForce        = wheels.wheels[wheelIndex].downForce,
         isOnSolidSurface = hardSurfaceIDs[mat] and true or false
+        -- pressure         = pressureGroupID and (obj:getGroupPressure(v.data.pressureGroups[pressureGroupID]) / 10000.0) or 0.0,
         -- contactDepth     = wheels.wheels[wheelIndex].contactDepth,
         -- rimRadius        = wheels.wheels[wheelIndex].hubRadius,
         -- tireRadius       = wheels.wheels[wheelIndex].radius,
-        -- sidewall         = wheels.wheels[wheelIndex].radius - wheels.wheels[wheelIndex].hubRadius,
+        -- sidewall         = wheels.wheels[wheelIndex].radius - wheels.wheels[wheelIndex].hubRadius
         -- tireWidth        = wheels.wheels[wheelIndex].tireWidth
     }
 end
@@ -479,43 +493,6 @@ local function getCurrentSteeringAngle(steeredWheelData, vehicleTransform)
     end)
 end
 
--- ================ Copied over from the original, but modified
-
--- return vehicle mass at spawn time (will not change e.g. after losing a bumper)
-local vehicleMassCache
-local function vehicleMass()
-    if not vehicleMassCache then
-        vehicleMassCache = 0
-        for _, n in pairs(v.data.nodes) do
-            vehicleMassCache = vehicleMassCache + n.nodeWeight
-        end
-    end
-    return vehicleMassCache
-end
-
-local lastDownforceFactor = 10
--- Freezes the value if less than `minGroundedWheels` are grounded
-local function getDownforceFactor(wheelData, minGroundedWheels)
-    if countIf(wheelData, function(w) return w.isGrounded end) < minGroundedWheels then
-        return lastDownforceFactor
-    end
-    local downforce = 0
-    for _,w in ipairs(wheelData) do
-        downforce = downforce + w.downForce
-    end
-    lastDownforceFactor = downforce / vehicleMass()
-    return lastDownforceFactor
-end
-
-local function getBestTurnRadius(vel, allWheelData, dt)
-    local accel  = obj:getStaticFrictionCoef() * getDownforceFactor(allWheelData, math.ceil(#allWheelData * 0.501))
-    accel        = radiusAccelSpeedCap:getUncapped(accel, dt)
-    local radius = square(vel) / accel
-    return clamp(radius, 0, 100000)
-end
-
--- ================
-
 -- Calibration stuff
 local prevAngle             = 0
 local hydroSignAtXY         = 0
@@ -559,7 +536,7 @@ local function customPhysicsStep(dtPhys)
         local hydroSign     = sign(hydroState)
         local hydroStateAbs = math.abs(hydroState)
         local vehTransform  = getVehicleTransform()
-        local wheelData     = getWheelDataMultiple(steeredWheels, vehTransform, true, false) -- // TODO steered or front whatever, all wheel steering
+        local wheelData     = getWheelDataMultiple(steeredWheels, vehTransform, true, false)
         local currentAngle  = getCurrentSteeringAngle(wheelData, vehTransform)
 
         if currentAngle == nil then
@@ -652,18 +629,18 @@ local function initSecondStage()
 
     local tmpAllWheels = {}
 
-    local foundSteeredWheels = false
-
     -- Helper function to find steered wheels. Could be improved, but so far this is the only way I found to detect them.
     local function isWheelSteered(index)
         return (v.data.wheels[index].steerAxisUp ~= nil or v.data.wheels[index].steerAxisDown ~= nil)
     end
 
+    local foundSteeredWheels = 0
+
     for i = 0, wheels.wheelCount - 1 do
         table.insert(allWheels, i)
 
         local isSteered = isWheelSteered(i)
-        foundSteeredWheels = foundSteeredWheels or isSteered
+        if isSteered then foundSteeredWheels = foundSteeredWheels + 1 end
         local _pos = average({ obj:getNodePositionRelative(wheels.wheels[i].node1), obj:getNodePositionRelative(wheels.wheels[i].node2) }) or vec3()
         _pos.y = -_pos.y
         table.insert(tmpAllWheels, {
@@ -683,14 +660,21 @@ local function initSecondStage()
 
     wheelbase = frontmostY - rearmostY
 
-    -- In case `isWheelSteered()` couldn't detect the steered wheels, we'll use the front wheels (by position).
-    if not foundSteeredWheels then
+    if foundSteeredWheels == 0 then
+        -- In case `isWheelSteered()` couldn't detect the steered wheels, we'll use the front wheels (by position).
         for i = #tmpAllWheels, 1, -1 do
             if tmpAllWheels[i].pos.y >= (frontmostY - 0.1) then
                 tmpAllWheels[i].steered = true
             else
                 break
             end
+        end
+    elseif foundSteeredWheels > 2 then
+        -- If more than 2 steered wheels were detected, only keep the frontmost 2. Keeping track of more might mess with some cars.
+        local steeredCount = 0
+        for i = #tmpAllWheels, 1, -1 do
+            if steeredCount >= 2 then tmpAllWheels[i].steered = false
+            elseif tmpAllWheels[i].steered then steeredCount = steeredCount + 1 end
         end
     end
 
@@ -723,6 +707,39 @@ local function initialize()
 
     initSecondStage()
 end
+
+-- ================ Copied over from the original, but modified
+
+-- return vehicle mass at spawn time (will not change e.g. after losing a bumper)
+local vehicleMassCache
+local function vehicleMass()
+    if not vehicleMassCache then
+        vehicleMassCache = 0
+        for _, n in pairs(v.data.nodes) do
+            vehicleMassCache = vehicleMassCache + n.nodeWeight
+        end
+    end
+    return vehicleMassCache
+end
+
+local lastDownforceFactor = 10
+-- Freezes the value if less than `minGroundedWheels` are grounded
+local function getDownforceFactor(wheelData, minGroundedWheels)
+    if countIf(wheelData, function(w) return w.isGrounded end) < minGroundedWheels then
+        return lastDownforceFactor
+    end
+    lastDownforceFactor = (sum(wheelData, fWheelSmoothDownforce) or 0.0) / vehicleMass()
+    return lastDownforceFactor
+end
+
+local function getBestTurnRadius(vel, allWheelData, dt)
+    local accel  = obj:getStaticFrictionCoef() * getDownforceFactor(allWheelData, math.ceil(#allWheelData * 0.501))
+    accel        = radiusAccelSpeedCap:getUncapped(accel, dt)
+    local radius = square(vel) / accel * 1.35
+    return clamp(radius, 0, 100000)
+end
+
+-- ================
 
 -- local function getMinTurnRadius()
 --     local c = wheelbase / math.cos((math.pi * 0.5) - steeringLockRad)
@@ -782,12 +799,13 @@ local function getSteeringLimit(velLen, allWheelData, dt)
     --   |_____\
     --      b
 
-    local a               = wheelbase
-    local b               = getBestTurnRadius(velLen, allWheelData, dt)
-    local c               = math.sqrt(a * a + b * b) -- // FIXME use steered wheel pos or something instead of entire wheelbase
-    local beta            = math.asin(b / c)
-    local desiredLimitRad = (math.pi * 0.5) - beta -- Steering angle at which the wheels' normal would point to the center of the turning circle
-    desiredLimitRad       = desiredLimitRad + math.rad(4) + math.rad(steeringCfg["steeringLimitOffset"]) -- Don't ask why but adding 4° gets the steering limit very close to ideal
+    local a                   = wheelbase
+    local b                   = getBestTurnRadius(velLen, allWheelData, dt)
+    local c                   = math.sqrt(a * a + b * b) -- // FIXME use steered wheel pos or something instead of entire wheelbase // FIXME remove fixme because its probably fine
+    local beta                = math.asin(b / c)
+    local desiredLimitRad     = (math.pi * 0.5) - beta -- Steering angle at which the wheels' normal would point to the center of the turning circle
+    local authorityCorrection = (1 - steeringCfg["counterForce.inputAuthority"]) * clamp(steeringCfg["counterForce.response"] * (steeringCfg["counterForce.useSteeredWheels"] and 5 or 5.5), 0, steeringCfg["counterForce.maxAngle"]) -- // FIXME experimental, not sure about this
+    desiredLimitRad           = desiredLimitRad + math.rad(5) + math.rad(authorityCorrection) + math.rad(steeringCfg["steeringLimitOffset"])
 
     return normalizedSteeringToInput(clamp01(desiredLimitRad / steeringLockRad))
 end
@@ -842,11 +860,6 @@ local function processInput(e, dt)
     local rearSlipAngle        = math.deg((average(rearWheelData, fWheelSlipAngle) or 0))
     local rearSlipAngleAbs     = math.abs(rearSlipAngle)
 
-    -- ======================== Countersteer assist
-
-    local wheelData           = steeringCfg["counterForce.useSteeredWheels"] and steeredWheelData or rearWheelData
-    local avgSourceWheelXVel  = steeringCfg["counterForce.useSteeredWheels"] and (average(wheelData, fWheelVehXVel) or localVel.x) or (avgRearWheelXVelRaw or localVel.x)
-
     -- 1 if at least one of the steered wheels is grounded, 0 otherwise. Basically a boolean with smoothing to prevent an instant transition.
     local groundedSmooth = 0.0
 
@@ -856,15 +869,34 @@ local function processInput(e, dt)
         groundedSmooth = smoothstep(isGroundedSpeedCap:get(0, dt))
     end
 
-    local carCorrection       = 31.5 / steeringLockDeg -- Correction factor for the max steering lock // TODO maybe not use this?
-    local referenceXVel       = 50 - (40 * steeringCfg["counterForce.response"])
-    local correctionBase      = clamp(-avgSourceWheelXVel / referenceXVel * carCorrection, -1, 1) -- The countersteer force is based on the horizontal velocity of the source wheels in the car's coordinate space, scaled according to the response setting
-    local dampingStrength     = (1.0 - originalInputAbs) -- Lessens the damping force as more steering input is applied. Damping is only really necessary if the assist is acting alone with no user input.
-    local counterForce        = counterAssistSmoother:getWithSpeedMult(correctionBase, dt, baseSteeringSpeedMult)
-    local dampingForce        = subtractTowardsZero(-yawAngularVel, 0.012, true) * steeringCfg["counterForce.damping"] * 0.25 * dampingStrength * dampingFade -- The damping force is based on the negative yaw angular velocity. A small amount is subtracted towards 0 to filter out some noise.
-    local counterCapModifier  = steeringCfg["counterForce.relativeAngle"] and (1.0 / carCorrection) or 1.0
-    local counterCap          = clamp01((clamp(steeringCfg["counterForce.maxAngle"], 0, steeringLockDeg) / steeringLockDeg) * counterCapModifier)
-    counterForce              = clamp(counterForce + dampingForce, -counterCap, counterCap) * groundedSmooth
+    -- ======================== Countersteer assist
+
+    -- Wheel data that the countersteer force will be based on
+    local sourceWheelData       = steeringCfg["counterForce.useSteeredWheels"] and steeredWheelData or rearWheelData
+
+    -- 1 when trying to countersteer, 0 otherwise. Basically a boolean with smoothing to prevent an instant transition.
+    local isCountersteering     = smoothstep(inputDirectionSpeedCap:getWithRate((sign(originalInput) ~= sign(guardZero(avgRearWheelXVel)) and originalInputAbs > 1e-10) and inverseLerpClamped(3, 8, rearSlipAngleAbs, 0, 1) or 0.0, dt, 5))
+
+    -- 0 if all steered wheels are offroad, otherwise 1. Only updated if all steered wheels are grounded
+    local solidSurfaceVal       = checkAllWheelsGrounded(steeredWheelData) and (checkAllWheelsOffroad(steeredWheelData) and 0 or 1) or lastSolidSurfaceVal
+    lastSolidSurfaceVal         = solidSurfaceVal
+    local smoothSolidSurfaceVal = smoothstep(surfaceChangeSpeedCap:get(solidSurfaceVal, dt))
+
+    local carCorrection         = 31.5 / steeringLockDeg -- Correction factor for the max steering lock
+    local referenceWVel         = 50 - (40 * steeringCfg["counterForce.response"]) -- Scales the countersteer force based on the response setting
+    local avgWheelVelocity      = average(sourceWheelData, function(w) return w.velocityVehSpc:z0() end) -- Average horizontal velocity of the source wheels in the car's coordinate space
+    local avgWheelVelFwd        = vec3(avgWheelVelocity.x, -math.abs(avgWheelVelocity.y), avgWheelVelocity.z) -- Corrects the direction in reverse
+    local avgWheelVelFwdLen     = avgWheelVelFwd:length()
+    local avgWheelVelocityAngle = math.deg(angleBetween(avgWheelVelFwd, vec3(0, -1, 0), avgWheelVelFwdLen, 1)) -- Average angle of the horizontal wheel velocity vectors in the car's coordinate space
+    local correctionBase        = (sign(guardZero(-avgWheelVelFwd.x)) * avgWheelVelocityAngle) * avgWheelVelFwdLen / referenceWVel * carCorrection * 0.0171 -- The magic number is to get the same magnitude as the old method I was using
+    local counterForce          = counterAssistSmoother:getWithSpeedMult(clamp(correctionBase, -1, 1), dt, baseSteeringSpeedMult)
+    local counterCap            = clamp(steeringCfg["counterForce.maxAngle"], 0, steeringLockDeg) / steeringLockDeg
+
+    local dampingStrength       = (1.0 - originalInputAbs) * 0.8 + 0.2 -- Lessens the damping force as more steering input is applied. Damping is much more important when the automatic countersteer force is acting alone with no user input.
+    local dampingForce          = subtractTowardsZero(-yawAngularVel, 0.012, true) * steeringCfg["counterForce.damping"] * 0.25 * dampingStrength * dampingFade -- The damping force is based on the negative yaw angular velocity. A small amount is subtracted towards 0 to filter out some noise.
+
+    counterForce                = clamp(counterForce + dampingForce, -counterCap, counterCap) * groundedSmooth
+    counterForce                = counterForce * lerp(offroadCounterMult, 1, smoothSolidSurfaceVal)
 
     -- ======================== Calculating the steering limit and final countersteer force
 
@@ -875,41 +907,34 @@ local function processInput(e, dt)
     local function processInputInward()
         local counterStrength = clamp01((1.0 - originalInputAbs) * effectiveAuthority + (1.0 - effectiveAuthority))
         local _counterForce   = normalizedSteeringToInput(counterForce * counterStrength)
-        return steeringLimit, _counterForce
+        local limit           = clamp01(steeringLimit + (1 - smoothSolidSurfaceVal) * normalizedSteeringToInput(clamp01(offroadCapIncreaseDeg / steeringLockDeg)))
+        return limit, _counterForce
     end
 
     -- Returns the steering limit and countersteer force that would be in effect if the player was countersteering
     local function processInputCounter()
-        local _counterForce       = normalizedSteeringToInput(counterForce)
-        local manualCounterCap    = inverseLerpClamped(0, math.max(steeringLockRad, math.rad(5)), math.abs(travelDirectionRad) + math.rad(6), 0, 1) -- // FIXME travel direction??
-        manualCounterCap          = normalizedSteeringToInput(manualCounterCap)
-        manualCounterCap          = clamp01(manualCounterCap - (sign(ival) * _counterForce))
+        local _counterForce    = normalizedSteeringToInput(counterForce)
+        local manualCounterCap = inverseLerpClamped(0, math.max(steeringLockRad, math.rad(5)), math.abs(travelDirectionRad) + math.rad(5), 0, 1) -- // FIXME travel direction??
+        manualCounterCap       = normalizedSteeringToInput(manualCounterCap)
+        manualCounterCap       = clamp01(manualCounterCap - (sign(ival) * _counterForce))
         return manualCounterCap, _counterForce
     end
 
+    -- Calculating the limit and countersteer force both as if the player was turning in or coutersteering. We'll lerp between them as needed.
     local capInward, counterForceInward   = processInputInward()
     local capOutward, counterForceOutward = processInputCounter()
 
-    -- 1 when trying to countersteer, 0 otherwise. Basically a boolean with smoothing to prevent an instant transition.
-    local isCountersteering = smoothstep(inputDirectionSpeedCap:getWithRate((sign(originalInput) ~= sign(guardZero(avgRearWheelXVel)) and originalInputAbs > 1e-10) and inverseLerpClamped(3, 8, rearSlipAngleAbs, 0, 1) or 0.0, dt, 5))
-
-    -- 0 if all steered wheels are offroad, otherwise 1. Only updated if all steered wheels are grounded
-    local solidSurfaceVal       = checkAllWheelsGrounded(steeredWheelData) and (checkAllWheelsOffroad(steeredWheelData) and 0 or 1) or lastSolidSurfaceVal
-    lastSolidSurfaceVal         = solidSurfaceVal
-    local smoothSolidSurfaceVal = smoothstep(surfaceChangeSpeedCap:get(solidSurfaceVal, dt))
-
-    -- Steering limit that will be applied. Will be 1 if the vehicle is on an offroad surface
+    -- Final steering limit that will be applied
     local effectiveCap = lerp(capInward, capOutward, isCountersteering)
-    effectiveCap       = lerp(1, effectiveCap, smoothSolidSurfaceVal)
 
-    -- Countersteer force that will be applied
+    -- Final countersteer force that will be applied
     local effectiveCounterForce = lerp(counterForceInward, counterForceOutward, isCountersteering)
 
     -- Final processed input
     local finalAssistedInput = clamp(ival * effectiveCap + effectiveCounterForce, e.minLimit, e.maxLimit)
     ival = lerp(ival, finalAssistedInput, fadeIn)
 
-    -- Debug draw calls
+    -- How to do debug draw shit
     -- obj.debugDrawProxy:drawNodeSphere(NODE, RADIUS, color(R, G, B))
     -- obj.debugDrawProxy:drawCylinder(FROM, TO, RADIUS, color(R, G, B))
 
@@ -925,6 +950,20 @@ local function processInput(e, dt)
         -- print(string.format("Countersteer cap:          %8.3f°", inputToNormalizedSteering(manualCounterCap) * steeringLockDeg))
         -- print(string.format("Manual counter force:      %8.3f°", inputToNormalizedSteering(finalCounterForce - counterForce) * steeringLockDeg))
         print(string.format("Countersteering:           %8.3f", isCountersteering))
+        -- print(string.format("Current turning radius:    %8.3f", clamp(math.abs(localHVel / yawAngularVel), 0, 9999.99)))
+        -- print(string.format("Best turning radius est.:  %8.3f", getBestTurnRadius(localHVel, allWheelData, dt)))
+
+        -- print(string.format("Limit:                     %8.3f°", inputToNormalizedSteering(getSteeringLimit(localFwdVelClamped, allWheelData, dt)) * steeringLockDeg))
+        -- print(string.format("ival:                      %8.3f°", inputToNormalizedSteering(ival) * steeringLockDeg))
+        -- print(string.format("Auto counter angle:        %8.3f°", inputToNormalizedSteering(counterForceInward) * steeringLockDeg))
+        -- print(string.format("Mass:                      %8.3f", vehicleMass()))
+        -- print(string.format("Friction:                  %8.3f", obj:getStaticFrictionCoef()))
+        -- print(string.format("Depth:                     %8.3f", steeredWheelData[1].contactDepth))
+        -- print(string.format("Steered:                   %8.3f", #steeredWheelData))
+        -- print(string.format("GRIP:                      %8.3f", obj:getStaticFrictionCoef()))
+        -- print(string.format("Sidewall:                  %8.3f", steeredWheelData[1].sidewall))
+        -- print(string.format("Softness:                  %8.3f", wheels.wheels[steeredWheelData[1].index].softnessCoef))
+        -- print(string.format("Pressure:                  %8.3f", steeredWheelData[1].pressure))
     end
 
     return ival, originalInput
@@ -1001,38 +1040,52 @@ local defaultConfig = {
     ["steeringLimitOffset"]           = 0.0,
     ["counterForce.useSteeredWheels"] = true,
     ["counterForce.response"]         = 0.3,
-    ["counterForce.maxAngle"]         = 10.0,
-    ["counterForce.relativeAngle"]    = false,
-    ["counterForce.inputAuthority"]   = 0.35,
+    ["counterForce.maxAngle"]         = 8.0,
+    ["counterForce.inputAuthority"]   = 0.4,
     ["counterForce.damping"]          = 0.65,
 }
 
 local settingsFilePath = "settings/arcadeSteering/settings.json"
+
+-- Returns a new object by merging `obj` into `ref`
+local function mergeObjects(ref, obj)
+    local ret = {}
+    for i,v in pairs(ref) do
+        if obj[i] ~= nil then
+            ret[i] = obj[i]
+        else
+            ret[i] = ref[i]
+        end
+    end
+    return ret
+end
 
 local function saveSettings(jsonStr, silent)
     if jsonStr then
         -- If settings are passed in, save those
         local decoded = jsonDecode(jsonStr)
         if decoded then
-            local saved = jsonWriteFile(settingsFilePath, decoded, true)
+            local saved = jsonWriteFile(settingsFilePath, mergeObjects(defaultConfig, decoded), true)
             if not silent then guihooks.trigger("arcadeSteeringSettingsSaved", saved) end
         elseif not silent then
              guihooks.trigger("arcadeSteeringSettingsSaved", false)
         end
     else
         -- If nothing is specified, save the current settings
-        local saved = jsonWriteFile(settingsFilePath, steeringCfg, true)
+        local saved = jsonWriteFile(settingsFilePath, mergeObjects(defaultConfig, steeringCfg), true)
         if not silent then guihooks.trigger("arcadeSteeringSettingsSaved", saved) end
     end
 end
 
 local function loadSettings()
-    steeringCfg = jsonReadFile(settingsFilePath)
+    local decoded = jsonReadFile(settingsFilePath)
 
-    if not steeringCfg then
+    if not decoded then
         log("W", logTag, "Failed to load Arcade Steering settings. Creating config file with the default settings ...")
         steeringCfg = defaultConfig
         saveSettings(nil, true)
+    else
+        steeringCfg = mergeObjects(defaultConfig, decoded)
     end
 end
 
@@ -1056,9 +1109,9 @@ end
 
 -- ======================== Hijacking original functions, injecting custom input processing
 
+local ogPhysicsStep      = onPhysicsStep
 local ogInputEvent       = input.event
 local ogInputToggleEvent = input.toggleEvent
-local ogPhysicsStep      = onPhysicsStep
 local ogInputUpdate      = input.updateGFX
 
 M.onExtensionLoaded = function()
@@ -1066,7 +1119,7 @@ M.onExtensionLoaded = function()
     loadSettings()
     displayCurrentSettings()
 
-    if not steeringCfg["enableCustomSteering"] then return end
+    if not steeringCfg["enableCustomSteering"] or not v.data.input then return end
 
     initialize()
 
@@ -1141,8 +1194,8 @@ M.onReset = reset
 
 M.displayDefaultSettings = displayDefaultSettings
 M.displayCurrentSettings = displayCurrentSettings
-M.applySettings = applySettings
-M.saveSettings = saveSettings
-M.reloadVehicle = reloadVehicle
+M.applySettings          = applySettings
+M.saveSettings           = saveSettings
+M.reloadVehicle          = reloadVehicle
 
 return M
