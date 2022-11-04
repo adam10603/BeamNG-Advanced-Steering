@@ -59,11 +59,11 @@ These settings affect how the car's natural countersteer tendency behaves. Manua
 
 ### Use steered wheels
 
-If enabled, the car's own countersteer force will be based on the forces experienced by the steered wheels (usually the front wheels).
+If enabled, the car's own countersteer force will be based on the forces at the steered wheels (usually the front wheels).
 
 If disabled, forces will be measured at the rear wheels (regardless if they are steered).
 
-Changing this can have an effect on stability. Basing the countersteer force on the steered wheels is more realistic (since those wheels are connected to the steering rack), however, this might make the car less stable at times. Taking the readings at the rear wheels is less realistic but can yield a more stable feel.
+Changing this can have an effect on stability. Basing the countersteer force on the steered wheels is more realistic but it might make the car less stable at times. Taking the readings at the rear wheels is less realistic but can yield a more stable feel.
 
 ___
 
