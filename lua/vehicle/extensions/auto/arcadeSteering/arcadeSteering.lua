@@ -746,6 +746,17 @@ end
 --     return math.sqrt(c * c - wheelbase * wheelbase) -- Just return c for front wheels, this is for rear
 -- end
 
+-- Draws a bar above the vehicle for debugging a scalar value
+local function debugBar(vehicleTransform, val, max, slot, colorArr)
+    local colorMult = sign(guardZero(val)) * 0.25 + 0.75
+    obj.debugDrawProxy:drawCylinder(
+        vehicleTransform:pointToWorld(vec3(0, 0, 1.8 + slot * 0.2)),
+        vehicleTransform:pointToWorld(vec3(0, 0, 1.8 + slot * 0.2) + vec3(-4, 0, 0) * (val / max)),
+        0.1,
+        color(colorArr[1] * colorMult, colorArr[2] * colorMult, colorArr[3] * colorMult)
+    )
+end
+
 -- Gets the baseline steering speed multiplier based on the relative steering speed setting
 local function getBaseSteeringSpeedMult()
     return steeringCfg["relativeSteeringSpeed"] and (580 / v.data.input.steeringWheelLock) or 1
