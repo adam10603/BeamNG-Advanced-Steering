@@ -61,9 +61,9 @@ These settings affect how the car's natural countersteer tendency behaves. Manua
 
 If enabled, the car's own countersteer force will be based on the forces at the steered wheels (usually the front wheels). This is more realistic, but can feel less stable at times.
 
-If disabled, forces will be measured at the rear wheels (regardless if they are steered). This is not realistic but it can yield are more stable feel.
+If disabled, forces will be measured at the rear wheels (regardless if they are steered). This is not realistic but it can yield a more stable feel.
 
-A side-effect of having this enabled is that you'll get an increased steering limit at low speeds (below 40km/h-ish) if you use an [Input authority](#input-authority) setting less than 1. It's a minor detail, you can ignore it.
+A side-effect of having this enabled is that you'll get an increased steering limit at low speeds (below 40km/h-ish) if you use an [Input authority](#input-authority) setting less than `1.0`. It's a minor detail, you can ignore it.
 
 ___
 
@@ -76,9 +76,9 @@ Higher values will make the car feel tighter, causing its natural countersteer f
 
 Lower values will make the car more loose, as the car's countersteer tendency will be more lazy and won't reach [Max angle](#max-angle) as easily.
 
-I don't recommend using values over 0.5 or so.
+I don't recommend using values over `0.5` or so.
 
-When driving on off-road surfaces, this value is internally decreased to allow for a looser "rally-style" driving style utilizing the car's claw grip.
+When driving on off-road surfaces, this value is internally decreased to allow for a looser "rally-style" driving utilizing the car's claw grip.
 
 Increasing this value might require [Damping](#damping) to be increased as well.
 
@@ -89,7 +89,7 @@ ___
 
 The maximum allowed steering angle when the car is countersteering only by itself. You can always countersteer more than this manually, but this will cap the car's own countersteer tendency.
 
-When driving on off-road surfaces, this value is internally decreased to allow for a looser "rally-style" driving style utilizing the car's claw grip.
+When driving on off-road surfaces, this value is internally decreased to allow for a looser "rally-style" driving utilizing the car's claw grip.
 
 Increasing this value might require [Damping](#damping) to be increased as well.
 
@@ -100,17 +100,17 @@ ___
 
 Only has an effect when turning inwards!
 
-It determines how much your steering input can overrule the car's own countersteer tendency. E.g. `0.4` would mean that even when you're fully turning inwards, 60% of the car's own countersteer force is still in effect.
+It determines how much your steering input can overrule the car's own countersteer tendency. E.g. `0.4` would mean that even when you're fully turning inwards, 60% of the car's own countersteer force is still in effect, fighting against your input.
 
 A lower value here will allow the car to resist your input more, taking it more as a "suggestion". This can result in better overall grip and stability, since it reduces the chance of the tires being overworked. GTA V's steering logic acts similarly to using a low value here.
 
-A higher value will give you more direct control over the steering, but you might risk overworking the tires and reducing grip. This feels closer to not using any assists, although not nearly that bad.
+A higher value will give you more direct control over the steering, but it might risk overworking the tires and reducing grip. This feels closer to not using any assists, although not nearly that bad.
 
 The effect is more noticeable in cars that easily lose front grip (like under braking).
 
-Since this setting controls how the car's own countersteer force is mixed with your input, the difference it makes depends on the [Response](#response) and [Max angle](#max-angle) settings. The stronger you make the countersteer force, the more difference you'll notice when it's mixed with your input.
+Since this setting controls how the car's own countersteer force is mixed with your input, the difference it makes depends on the [Response](#response) and [Max angle](#max-angle) settings. The stronger you make the car's countersteer force, the more difference you'll notice when it's mixed with your input.
 
-Starting with version 2.1 lowering this setting will internally increase the [Steering limit offset](#steering-limit-offset) setting slightly. This roughly compensates for the steering angle you lose when using low values here.
+Lowering this setting will internally increase the [Steering limit offset](#steering-limit-offset) setting slightly. This roughly compensates for the steering angle you lose when using low values here.
 
 When using the ***Key (smooth)*** input filter, this setting is reduced internally to 60% of its value.
 
@@ -127,6 +127,6 @@ This is most noticeable when you stop giving steering input during a high-speed 
 
 In general, the stronger you make the car's countersteer tendency with the [Response](#response) and [Max angle](#max-angle) settings, the more damping you'll need. You'll also need more damping if the [Use steered wheels](#use-steered-wheels) setting is enabled, as that's naturally less stable.
 
-I wouldn't recommend using more damping than necessary. Increasing damping too much can lead to unwanted vibrations in some cars. If you notice the steering spazzing out, you might want to decrease damping.
+I wouldn't recommend using more damping than necessary. Increasing damping too much can lead to unwanted vibrations in some cars. If you notice the steering spazzing out sometimes, you might want to decrease damping.
 
 ![Damping](https://i.imgur.com/SdnhUcA.gif)
