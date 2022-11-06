@@ -895,7 +895,7 @@ local function processInput(e, dt)
 
     local carCorrection         = 31.5 / steeringLockDeg -- Correction factor for the max steering lock
     local referenceWVel         = 50 - (40 * steeringCfg["counterForce.response"]) -- Scales the countersteer force based on the response setting
-    local avgWheelVelocity      = average(sourceWheelData, function(w) return w.velocityVehSpc:z0() end) -- Average horizontal velocity of the source wheels in the car's coordinate space
+    local avgWheelVelocity      = average(sourceWheelData, function(w) return w.velocityVehSpc:z0() end) or vec3() -- Average horizontal velocity of the source wheels in the car's coordinate space
     local avgWheelVelFwd        = vec3(avgWheelVelocity.x, -math.abs(avgWheelVelocity.y), avgWheelVelocity.z) -- Corrects the direction in reverse
     local avgWheelVelFwdLen     = avgWheelVelFwd:length()
     local avgWheelVelocityAngle = math.deg(angleBetween(avgWheelVelFwd, vec3(0, -1, 0), avgWheelVelFwdLen, 1)) -- Average angle of the horizontal wheel velocity vectors in the car's coordinate space
