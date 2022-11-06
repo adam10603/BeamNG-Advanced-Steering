@@ -746,6 +746,17 @@ end
 --     return math.sqrt(c * c - wheelbase * wheelbase) -- Just return c for front wheels, this is for rear
 -- end
 
+-- Draws a bar above the vehicle for debugging a scalar value
+local function debugBar(vehicleTransform, val, max, slot, colorArr)
+    local colorMult = sign(guardZero(val)) * 0.25 + 0.75
+    obj.debugDrawProxy:drawCylinder(
+        vehicleTransform:pointToWorld(vec3(0, 0, 1.8 + slot * 0.2)),
+        vehicleTransform:pointToWorld(vec3(0, 0, 1.8 + slot * 0.2) + vec3(-4, 0, 0) * (val / max)),
+        0.1,
+        color(colorArr[1] * colorMult, colorArr[2] * colorMult, colorArr[3] * colorMult)
+    )
+end
+
 -- Gets the baseline steering speed multiplier based on the relative steering speed setting
 local function getBaseSteeringSpeedMult()
     return steeringCfg["relativeSteeringSpeed"] and (580 / v.data.input.steeringWheelLock) or 1
@@ -852,8 +863,7 @@ local function processInput(e, dt)
     local travelDirectionRad   = math.atan2(localVel.x, localVel.y)
     local yawAngularVel        = stablePhysicsData.yawAngularVel:get() or 0.0
 
-    local avgRearWheelXVelRaw  = average(rearWheelData, fWheelVehXVel)
-    local avgRearWheelXVel     = avgRearWheelXVelRaw or 0.0
+    local avgRearWheelXVel     = average(rearWheelData, fWheelVehXVel) or 0.0
 
     local steeredSlipAngle     = math.deg(average(steeredWheelData, fWheelSlipAngle) or 0)
     local steeredSlipAngleAbs  = math.abs(steeredSlipAngle)
@@ -884,7 +894,7 @@ local function processInput(e, dt)
 
     local carCorrection         = 31.5 / steeringLockDeg -- Correction factor for the max steering lock
     local referenceWVel         = 50 - (40 * steeringCfg["counterForce.response"]) -- Scales the countersteer force based on the response setting
-    local avgWheelVelocity      = average(sourceWheelData, function(w) return w.velocityVehSpc:z0() end) -- Average horizontal velocity of the source wheels in the car's coordinate space
+    local avgWheelVelocity      = average(sourceWheelData, function(w) return w.velocityVehSpc:z0() end) or vec3() -- Average horizontal velocity of the source wheels in the car's coordinate space
     local avgWheelVelFwd        = vec3(avgWheelVelocity.x, -math.abs(avgWheelVelocity.y), avgWheelVelocity.z) -- Corrects the direction in reverse
     local avgWheelVelFwdLen     = avgWheelVelFwd:length()
     local avgWheelVelocityAngle = math.deg(angleBetween(avgWheelVelFwd, vec3(0, -1, 0), avgWheelVelFwdLen, 1)) -- Average angle of the horizontal wheel velocity vectors in the car's coordinate space
@@ -1035,7 +1045,7 @@ end
 local defaultConfig = {
     ["enableCustomSteering"]          = true,
     ["logData"]                       = false,
-    ["steeringSpeed"]                 = 1.2,
+    ["steeringSpeed"]                 = 1.0,
     ["relativeSteeringSpeed"]         = true,
     ["steeringLimitOffset"]           = 0.0,
     ["counterForce.useSteeredWheels"] = true,
