@@ -1045,7 +1045,7 @@ end
 local defaultConfig = {
     ["enableCustomSteering"]          = true,
     ["logData"]                       = false,
-    ["steeringSpeed"]                 = 1.2,
+    ["steeringSpeed"]                 = 1.0,
     ["relativeSteeringSpeed"]         = true,
     ["steeringLimitOffset"]           = 0.0,
     ["counterForce.useSteeredWheels"] = true,
