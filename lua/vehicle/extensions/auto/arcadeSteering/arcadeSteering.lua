@@ -863,8 +863,7 @@ local function processInput(e, dt)
     local travelDirectionRad   = math.atan2(localVel.x, localVel.y)
     local yawAngularVel        = stablePhysicsData.yawAngularVel:get() or 0.0
 
-    local avgRearWheelXVelRaw  = average(rearWheelData, fWheelVehXVel) or 0.0
-    local avgRearWheelXVel     = avgRearWheelXVelRaw or 0.0
+    local avgRearWheelXVel     = average(rearWheelData, fWheelVehXVel) or 0.0
 
     local steeredSlipAngle     = math.deg(average(steeredWheelData, fWheelSlipAngle) or 0)
     local steeredSlipAngleAbs  = math.abs(steeredSlipAngle)
