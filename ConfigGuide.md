@@ -47,9 +47,9 @@ ___
 
 ### Relative steering speed
 
-If enabled, the steering speed will be adjusted to each vehicle's steering wheel lock. Vehicles that have a lot of steering wheel travel will have slower steering as a result (like trucks or buses). The default input system also does this.
+If enabled, the steering speed will be adjusted to each vehicle's max steering wheel rotation. This means that parts like quick ratio steering racks will change the effective steering speed at the wheels, and vehicles that have more steering wheel rotation will have slower steering as a result (like trucks or buses). The default input system also does this.
 
-If disabled, all vehicles will have a similar-ish steering speed at the wheels. Note that the steering hydro will still have a different speed cap in each vehicle, so your mileage may still vary.
+If disabled, all vehicles will have a similar-ish steering speed at the wheels. This means that parts like quick ratio steering racks will NOT change the effective steering speed at the wheels. Note that the steering hydro will still have a different speed cap in each vehicle, so your mileage may still vary.
 
 ___
 
