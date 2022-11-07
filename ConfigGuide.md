@@ -61,7 +61,7 @@ These settings affect how the car's natural countersteer tendency behaves. Manua
 
 If enabled, the car's own countersteer force will be based on the forces at the steered wheels (usually the front wheels). This is more realistic, but can feel less stable at times.
 
-If disabled, forces will be measured at the rear wheels (regardless if they are steered). This is not realistic but it can yield a more stable feel.
+If disabled, forces will be measured at the rear wheels (regardless if they are steered). This is not realistic but it yields a more stable feel. If you disable this setting, I recommend decreasing [Response](#response) and [Damping](#damping) a bit, since this mode will inherently start countersteering a bit sooner and also won't overcorrect as much.
 
 A side-effect of having this enabled is that you'll get an increased steering limit at low speeds (below 40km/h-ish) if you use an [Input authority](#input-authority) setting less than `1.0`. It's a minor detail, you can ignore it.
 
