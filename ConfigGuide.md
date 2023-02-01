@@ -100,7 +100,7 @@ ___
 
 It determines how much your steering input can overrule the car's own countersteer force when you turn inwards while the car is oversteering.
 
-A lower value will allow the car to resist your input more if you're trying to turn inwards despite the car oversteering. A higher value will give you more direct control, but it makes oversteering easier.
+A lower value will allow the car to resist your input more if you're trying to turn inwards when the car oversteering. A higher value will give you more direct control, but it makes oversteering easier.
 
 Think of a lower setting like having a looser grip on the steering wheel and letting it pull back if it wants to. A higher setting is more like holding the steering wheel firmly at a certain position.
 
@@ -125,6 +125,6 @@ This is most noticeable in high-grip cars when you stop giving steering input du
 
 In general, the stronger you make the car's countersteer tendency with the [Response](#response) and [Max angle](#max-angle) settings, the more damping you'll need. You'll also need more damping if the [Use steered wheels](#use-steered-wheels) setting is enabled, as that's naturally less stable.
 
-I wouldn't recommend using more damping than necessary. Increasing damping too much can lead to unwanted vibrations in some cars. If you notice the steering spazzing out sometimes, you might want to decrease damping.
+I wouldn't recommend using more damping than necessary. Too much can lead to unwanted vibrations in some cars. If you notice the steering spazzing out sometimes (especially under braking), you might want to decrease damping.
 
 ![Damping](https://i.imgur.com/SdnhUcA.gif)
