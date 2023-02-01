@@ -41,7 +41,7 @@ ___
 
 Changes the steering angle cap. For example a value of `2.0` would let you steer 2° more than normal.
 
-The default cap (`0.0`) is already very accurate with keeping the steered wheels near their peak grip in a turn, so I don't see a need to change this. I only left this setting here just in case someone runs into a weird edge case or something. You can ignore this basically.
+The default cap (`0.0`) is already very accurate with keeping the steered wheels near their peak grip in a turn, so I don't see a need to change this. I only left this setting here just in case someone runs into a weird edge case. You can ignore this basically.
 
 ___
 
@@ -49,7 +49,7 @@ ___
 
 If enabled, the steering speed will be adjusted to each vehicle's max steering wheel rotation. This means that parts like quick ratio steering racks will change the effective steering speed at the wheels, and vehicles that have more steering wheel rotation will have slower steering as a result (like trucks or buses). The default input system also does this.
 
-If disabled, all vehicles will have a similar-ish steering speed at the wheels. This means that parts like quick ratio steering racks will NOT change the effective steering speed at the wheels. Note that the steering hydro will still have a different speed cap in each vehicle, so your mileage may still vary.
+If disabled, all vehicles will have a similar-ish steering speed at the wheels. This means that parts like quick ratio steering racks will NOT change the effective steering speed at the wheels.
 
 ___
 
@@ -76,7 +76,7 @@ Higher values will make the car feel tighter, causing its natural countersteer f
 
 Lower values will make the car more loose, as the car's countersteer tendency will be more lazy and won't reach [Max angle](#max-angle) as easily.
 
-I don't recommend using values over `0.5` or so.
+I recommend keeping this below `0.5` or so.
 
 When driving on off-road surfaces, this value is internally decreased to allow for a looser "rally-style" driving utilizing the car's claw grip.
 
@@ -98,21 +98,19 @@ ___
 ### Input authority
 > Range: `0.0` - `1.0`
 
-Only has an effect when turning inwards!
+It determines how much your steering input can overrule the car's own countersteer force when you turn inwards while the car is oversteering.
 
-It determines how much your steering input can overrule the car's own countersteer tendency. E.g. `0.4` would mean that even when you're fully turning inwards, 60% of the car's own countersteer force is still in effect, fighting against your input.
+A lower value will allow the car to resist your input more if you're trying to turn inwards despite the car oversteering. A higher value will give you more direct control, but it makes oversteering easier.
 
-A lower value here will allow the car to resist your input more, taking it more as a "suggestion". This can result in better overall grip and stability, since it reduces the chance of the tires being overworked. GTA V's steering logic acts similarly to using a low value here.
+Think of a lower setting like having a looser grip on the steering wheel and letting it pull back if it wants to. A higher setting is more like holding the steering wheel firmly at a certain position.
 
-A higher value will give you more direct control over the steering, but it might risk overworking the tires and reducing grip. This feels closer to not using any assists, although not nearly that bad.
-
-The effect is more noticeable in cars that easily lose front grip (like under braking).
-
-Since this setting controls how the car's own countersteer force is mixed with your input, the difference it makes depends on the [Response](#response) and [Max angle](#max-angle) settings. The stronger you make the car's countersteer force, the more difference you'll notice when it's mixed with your input.
-
-Lowering this setting will internally increase the [Steering limit offset](#steering-limit-offset) setting slightly. This roughly compensates for the steering angle you lose when using low values here.
+The difference this setting makes depends on the [Response](#response) and [Max angle](#max-angle) settings. The stronger you make the car's countersteer force, the more difference you'll notice when you allow it to resist your input.
 
 When using the ***Key (smooth)*** input filter, this setting is reduced internally to 60% of its value.
+
+In the GIF below, the car starts to gently oversteer after the turn begins. Low input authority allows the car to correct the slide to an extent despite the player fully turning inwards.
+
+![Input authority](https://i.imgur.com/bQANw6m.gif)
 
 ___
 
@@ -123,7 +121,7 @@ How much damping force to apply to the car's own countersteer force.
 
 Without damping, the car's countersteering might overshoot and oscillate left and right when trying to straighten out. Damping helps the countersteer force to settle down and prevents it from overcorrecting.
 
-This is most noticeable when you stop giving steering input during a high-speed turn and let the car try to straighten out on its own.
+This is most noticeable in high-grip cars when you stop giving steering input during a high-speed turn and let the car try to straighten out on its own.
 
 In general, the stronger you make the car's countersteer tendency with the [Response](#response) and [Max angle](#max-angle) settings, the more damping you'll need. You'll also need more damping if the [Use steered wheels](#use-steered-wheels) setting is enabled, as that's naturally less stable.
 

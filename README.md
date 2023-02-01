@@ -1,11 +1,11 @@
 # BeamNG.drive: Arcade Steering
-![Version](https://img.shields.io/badge/Version-2.1.1-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v26.2.0-green.svg)
+![Version](https://img.shields.io/badge/Version-2.2-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v27.1.0-green.svg)
 
 ## Intro 🖊️
 
 This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. It provides a steering system that's more aware of the vehicle's underlying physics and results in an improved steering feel that's more intuitive and fun.
 
-BeamNG version 0.26+ has two options called ***Oversteer reduction assistant*** and ***Understeer reduction assistant*** which behave similarly to this mod (in fact, they were likely inspired by the first version of my mod). These options are definitely an improvement over not having them at all (like in older versions of the game), however, the steering feel they provide still leaves room for improvement. This is where Arcade Steering comes in.
+BeamNG version 0.26+ has two options called ***Oversteer reduction assistant*** and ***Understeer reduction assistant*** which behave similarly to this mod (in fact, they were likely inspired by the first version of my mod). These options are an improvement over not having them at all (like in older versions of the game), however, the steering feel they provide still leaves room for improvement. This is where Arcade Steering comes in.
 
 The main features of the mod include:
 
@@ -16,7 +16,7 @@ The main features of the mod include:
  - More refined steering feel compared to the stock assists
  - Highly customizable settings
 
-Despite the "arcade" name, you shouldn't think of this as some artificial driver-aid or somehow less realistic. This is a common way of processing steering input in racing games (both arcade and sim), and it mimics real-life driving mechanics. It simply makes the steering behave in a more intuitive way.
+Despite the "arcade" name, you shouldn't think of this as some artificial driver-aid or somehow less realistic. This is a common way of processing steering input in racing games (both arcade and sim), and it mimics real-life driving mechanics. It simply makes the steering behave in a more intuitive way that you otherwise wouldn't get if your input device lacks force-feedback.
 
 ## Installation 🖥️
 
