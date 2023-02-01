@@ -125,6 +125,6 @@ This is most noticeable in high-grip cars when you stop giving steering input du
 
 In general, the stronger you make the car's countersteer tendency with the [Response](#response) and [Max angle](#max-angle) settings, the more damping you'll need. You'll also need more damping if the [Use steered wheels](#use-steered-wheels) setting is enabled, as that's naturally less stable.
 
-I wouldn't recommend using more damping than necessary. Too much can lead to unwanted vibrations in some cars. If you notice the steering spazzing out sometimes (especially under braking), you might want to decrease damping.
+I wouldn't recommend using more damping than necessary as too much can cause unwanted vibrations in some cars. If you notice the steering spazzing out sometimes (especially under braking), you might want to decrease damping.
 
 ![Damping](https://i.imgur.com/SdnhUcA.gif)
