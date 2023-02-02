@@ -93,6 +93,8 @@ When driving on off-road surfaces, this value is internally decreased to allow f
 
 Increasing this value might require [Damping](#damping) to be increased as well.
 
+![Max angle](https://i.imgur.com/zxtFXWu.gif)
+
 ___
 
 ### Input authority
