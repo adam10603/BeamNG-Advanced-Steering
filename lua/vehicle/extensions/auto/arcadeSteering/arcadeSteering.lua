@@ -553,7 +553,7 @@ local function getWheelData(wheelIndex, vehTransform, ignoreAirborne)
         downForce        = wheels.wheels[wheelIndex].downForce,
         isOnHardSurface  = hardSurfaceIDs[mat] and true or false,
         contactMatID     = mat,
-        pressure         = pressureGroupID and (obj:getGroupPressure(v.data.pressureGroups[pressureGroupID]) / 10000.0) or 0.0,
+        pressure         = v.data.pressureGroups[pressureGroupID] and (obj:getGroupPressure(v.data.pressureGroups[pressureGroupID]) / 10000.0) or 0.0,
         deflated         = wheels.wheels[wheelIndex].isTireDeflated,
         -- contactDepth     = wheels.wheels[wheelIndex].contactDepth,
         -- rimRadius        = wheels.wheels[wheelIndex].hubRadius,
@@ -1364,8 +1364,8 @@ end
 
 M.onExtensionLoaded = function()
 
-    -- BeamMP compatibility
-    if v.mpVehicleType == "R" then
+    -- BeamMP remote vehicles and AI traffic
+    if v.mpVehicleType == "R" or ai.mode ~= "disabled" or not v.data.controller or #v.data.controller == 0 then
         disableArcadeSteering = true
         return
     end
@@ -1414,8 +1414,8 @@ M.onExtensionLoaded = function()
 
     input.updateGFX = function(dt)
 
-        -- BeamMP compatibility
-        if v.mpVehicleType == "R" then
+        -- BeamMP remote vehicles and AI traffic
+        if v.mpVehicleType == "R" or ai.mode ~= "disabled" then
             disableArcadeSteering = true
         end
 
@@ -1429,7 +1429,7 @@ M.onExtensionLoaded = function()
 
             if k == "steering" then
                 if not (e.filter == FILTER_PAD or e.filter == FILTER_KBD or e.filter == FILTER_KBD2) then
-                    input.state[k].val = M.state[k].val
+                    input.state[k] = M.state[k]
                 else
                     input.state[k].val, unassistedInput = processInput(M.state[k], dt)
                     input.state[k].filter               = FILTER_DIRECT
@@ -1460,5 +1460,9 @@ M.displayCurrentSettings = displayCurrentSettings
 M.applySettings          = applySettings
 M.saveSettings           = saveSettings
 M.reloadVehicle          = reloadVehicle
+M.onPlayersChanged       = function(hasPlayer)
+    -- Workaround for the UI losing the config values when you switch to an AI car and then remove AI traffic then switch back to your car
+    if hasPlayer then displayCurrentSettings() end
+end
 
 return M
