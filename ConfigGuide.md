@@ -74,7 +74,7 @@ Adjusts how easily the car's natural countersteer force can reach it's maximum (
 
 Higher values will make the car feel tighter, causing its natural countersteer force to fight harder to go straight.
 
-Lower values will make the car more loose, as the car's countersteer tendency will be more lazy and won't reach [Max angle](#max-angle) as easily.
+Lower values will make the car more loose, as the car's countersteer tendency won't be as aggressive.
 
 I recommend keeping this below `0.5` or so.
 
