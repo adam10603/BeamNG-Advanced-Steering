@@ -921,7 +921,7 @@ local function getSteeringSpeedMult(filter, baseSteeringSpeedMult)
     local ret = steeringCfg["steeringSpeed"] * ((electrics.values.airspeed / 150.0) + 1.0) -- // TODO add a config value for this or something
     ret       = ret * baseSteeringSpeedMult
     if filter == FILTER_KBD then
-        ret = ret * 0.6
+        ret = ret * 0.75
     end
     return ret
 end
@@ -1037,7 +1037,7 @@ end
 
 -- Lowers the input authority setting for keyboard
 local function getEffectiveInputAuthority(filter)
-    return (filter == FILTER_KBD) and (steeringCfg["counterForce.inputAuthority"] * 0.6) or steeringCfg["counterForce.inputAuthority"]
+    return (filter == FILTER_KBD) and (steeringCfg["counterForce.inputAuthority"] * 0.75) or steeringCfg["counterForce.inputAuthority"]
 end
 
 -- local gxSmootherTest = RunningAverage:new(80)
