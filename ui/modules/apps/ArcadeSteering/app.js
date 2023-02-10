@@ -61,7 +61,7 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
 
             scope.saveSettings = () => {
                 let settings = scope.readSettingsFromGUI();
-                bngApi.engineLua(s`arcadeSteeringGE.saveSettings('${JSON.stringify(settings)}')`);
+                bngApi.engineLua(`arcadeSteeringGE.saveSettings('${JSON.stringify(settings)}')`);
             };
 
             scope.loadDefaultSettings = () => {

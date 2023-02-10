@@ -1148,7 +1148,7 @@ local function processInput(e, dt)
     -- Returns the steering limit and countersteer force that would be in effect if the player was countersteering
     local function processInputCounter()
         local _counterForce    = normalizedSteeringToInput(counterForce)
-        local manualCounterCap = inverseLerpClamped(0, math.max(steeringLockRad, math.rad(8)), math.rad(rearSlipAngleAbs) + math.rad(3), 0, 1) -- // FIXME travel direction??
+        local manualCounterCap = inverseLerpClamped(0, math.max(steeringLockRad, math.rad(8)), math.rad(rearSlipAngleAbs) + math.rad(4), 0, 1) -- // FIXME travel direction??
         manualCounterCap       = normalizedSteeringToInput(manualCounterCap)
         manualCounterCap       = clamp01(manualCounterCap - (sign(originalInput) * _counterForce))
         return manualCounterCap, _counterForce
