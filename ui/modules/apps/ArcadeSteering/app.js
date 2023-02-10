@@ -26,10 +26,6 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
                 return (str + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
             };
 
-            scope.vehicleCommand = (cmd) => {
-                return `local veh = be:getPlayerVehicle(0) if veh then veh:queueLuaCommand("${scope.escapeStr(cmd)}") end`;
-            };
-
             scope.formatInput = (inputEm) => {
                 if (inputEm.parentNode.classList.contains("input-format-degree")) {
                     inputEm.parentNode.setAttribute("altered-value", `${inputEm.value}°`);
@@ -60,20 +56,20 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
 
             scope.applySettings = () => {
                 let settings = scope.readSettingsFromGUI();
-                bngApi.engineLua(scope.vehicleCommand(`arcadeSteering.applySettings('${JSON.stringify(settings)}')`));
+                bngApi.engineLua(`arcadeSteeringGE.applySettings('${JSON.stringify(settings)}')`);
             };
 
             scope.saveSettings = () => {
                 let settings = scope.readSettingsFromGUI();
-                bngApi.engineLua(scope.vehicleCommand(`arcadeSteering.saveSettings('${JSON.stringify(settings)}')`));
+                bngApi.engineLua(`arcadeSteeringGE.saveSettings('${JSON.stringify(settings)}')`);
             };
 
             scope.loadDefaultSettings = () => {
-                bngApi.engineLua(scope.vehicleCommand("arcadeSteering.displayDefaultSettings()"));
+                bngApi.engineLua("arcadeSteeringGE.displayDefaultSettings()");
             };
 
             scope.loadCurrentSettings = () => {
-                bngApi.engineLua(scope.vehicleCommand("arcadeSteering.displayCurrentSettings()"));
+                bngApi.engineLua("arcadeSteeringGE.displayCurrentSettings()");
             };
 
             scope.showFeedbackOnButton = (button, successText, success) => {
@@ -91,12 +87,9 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
                 }
             };
 
-            scope.updateReloadWarning = () => {
-                if (scope.masterToggle.checked != scope.currentSettings["enableCustomSteering"]) {
-                    scope.reloadWarning.classList.remove("hidden");
-                } else {
-                    scope.reloadWarning.classList.add("hidden");
-                }
+            scope.updateReloadWarning = (isDirty) => {
+                if (isDirty === false) scope.reloadWarning.classList.add("hidden");
+                else if (isDirty === true || scope.masterToggle.checked != scope.currentSettings["enableCustomSteering"]) scope.reloadWarning.classList.remove("hidden");
             };
 
             element.ready(() => {
@@ -134,7 +127,7 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
                 if (data["isDefault"]) scope.showFeedbackOnButton(scope.buttons.defaultButton, "Loaded!", true);
                 else scope.currentSettings = data["settings"];
                 scope.updateGUIValues(data["settings"]);
-                scope.updateReloadWarning();
+                scope.updateReloadWarning(data["dirty"]);
             });
         }
     };
