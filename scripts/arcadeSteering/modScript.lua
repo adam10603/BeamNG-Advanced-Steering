@@ -1,1 +1,2 @@
--- registerCoreModule("arcadeSteering/arcadeSteering")
+load("arcadeSteeringGE")
+registerCoreModule("arcadeSteeringGE")
