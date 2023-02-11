@@ -102,7 +102,7 @@ ___
 
 It determines how much your steering input can overrule the car's own countersteer force when you turn inwards while the car is oversteering.
 
-A lower value will allow the car to resist your input more if you're trying to turn inwards when the car oversteering. A higher value will give you more direct control, but it makes oversteering easier.
+A lower value will allow the car to resist your input more if you're trying to turn inwards while the car oversteers. A higher value will give you more direct control, but it makes oversteering easier.
 
 Think of a lower setting like having a looser grip on the steering wheel and letting it pull back if it wants to. A higher setting is more like holding the steering wheel firmly at a certain position.
 
