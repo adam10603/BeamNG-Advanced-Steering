@@ -348,8 +348,9 @@ local offroadCapIncreaseDeg     = 14 -- How much extra steering to give on offro
 local offroadCounterMult        = 0.5 -- Multiplies the strength of the automatic countersteer offroad. Helps with rally-style driving like throwing cars into a turn.
 local wheelsMidPoint            = vec3(0, 0, 0) -- The average position of all the wheels (car coordinate space)
 local avgPressureAtStart        = -1 -- The average tire pressure when the vehicle is first spawned, used as a fallback
-local disableArcadeSteering     = false -- If true, the mod will restore all the original input functionality and disable itself on the next frame
-
+local disableArcadeSteering     = false -- If true, the mod will restore all the original input functionality and disable itself on the next frame (for this vehicle only)
+local initialToggleSetting      = nil
+local isVehicleActive           = false
 
 -- =================== State (things that need to be reset)
 
@@ -365,6 +366,10 @@ local calibrationHydroCap       = newTemporalSmoothing(2.5, 2.5, 2.5, 0) -- Hydr
 local lastHardSurfaceVal        = 1 -- 0 if driving offroad, 1 on hard surfaces. Only changed if more than half the wheels change surface type, frozen if at least half the wheels are airborne.
 local counterForceLPF           = newTemporalSmoothingNonLinear(30, 30, 0) -- Low pass filters for the automatic countersteer force. These are used to let small vibrations through even when the countersteer force is meant to be suppressed.
 local counterForce2LPF          = newTemporalSmoothingNonLinear(30, 30, 0)
+local counterBlendSpeedCap      = newTemporalSmoothing(6.0, 6.0, 6.0, 0)
+local manualCounterBlendCap     = newTemporalSmoothing(6.0, 6.0, 6.0, 0)
+local steeredTorqueSmoother     = newTemporalSmoothingNonLinear(8, 8, 0)
+local steeredGripSmoother       = newTemporalSmoothingNonLinear(8, 8, 0)
 
 local stablePhysicsData = {
     yawAngularVel   = RunningAverage:new(physicsSmoothingWindow),
@@ -560,7 +565,9 @@ local function getWheelData(wheelIndex, vehTransform, ignoreAirborne)
         -- tireRadius       = wheels.wheels[wheelIndex].radius,
         sidewall         = wheels.wheels[wheelIndex].radius - wheels.wheels[wheelIndex].hubRadius,
         tireVolume       = wheels.wheels[wheelIndex].tireVolume,
-        tireSoftness     = wheels.wheels[wheelIndex].softnessCoef
+        tireSoftness     = wheels.wheels[wheelIndex].softnessCoef,
+        isPropulsed      = wheels.wheels[wheelIndex].isPropulsed,
+        propulsionTorque = wheels.wheels[wheelIndex].propulsionTorque * wheels.wheels[wheelIndex].wheelDir
         -- tireWidth        = wheels.wheels[wheelIndex].tireWidth
     }
 end
@@ -740,6 +747,10 @@ local function reset()
     lastHardSurfaceVal = 1
     counterForceLPF:reset()
     counterForce2LPF:reset()
+    counterBlendSpeedCap:reset()
+    manualCounterBlendCap:reset()
+    steeredTorqueSmoother:reset()
+    steeredGripSmoother:reset()
 
     stablePhysicsData.yawAngularVel:reset()
     stablePhysicsData.vehVelocity:reset()
@@ -873,6 +884,10 @@ local function getDownforceFactor(wheelData, minGroundedWheels)
     return lastDownforceFactor
 end
 
+local function getGripFactor(wheelData)
+    return obj:getStaticFrictionCoef() * getDownforceFactor(wheelData, math.floor(#wheelData * 0.5) + 1)
+end
+
 -- Returns a correction factor for the best turning radius based on variables like grip and tire properties.
 local function getRadiusCorrection(grip, allWheelData)
     local avgTireVolume = average(allWheelData, fWheelTireVolume) or 0.035
@@ -882,14 +897,14 @@ local function getRadiusCorrection(grip, allWheelData)
 end
 
 local function getBestTurnRadius(vel, allWheelData, dt)
-    local grip   = obj:getStaticFrictionCoef() * getDownforceFactor(allWheelData, math.floor(#allWheelData * 0.5) + 1)
+    local grip   = getGripFactor(allWheelData)
     grip         = radiusGripSmoother:get(grip, dt)
     local radius = (vel * vel) / grip * getRadiusCorrection(grip, allWheelData)
     return clamp(radius, 0, 100000)
 end
 
 local function getBestTurnRadiusOLD(vel, allWheelData, dt)
-    local grip   = obj:getStaticFrictionCoef() * getDownforceFactor(allWheelData, math.floor(#allWheelData * 0.5) + 1)
+    local grip   = getGripFactor(allWheelData)
     grip         = radiusGripSmootherOLD:get(grip, dt)
     local radius = (vel * vel) / grip * 1.35
     return clamp(radius, 0, 100000)
@@ -907,7 +922,7 @@ local function getSteeringSpeedMult(filter, baseSteeringSpeedMult)
     local ret = steeringCfg["steeringSpeed"] * ((electrics.values.airspeed / 150.0) + 1.0) -- // TODO add a config value for this or something
     ret       = ret * baseSteeringSpeedMult
     if filter == FILTER_KBD then
-        ret = ret * 0.6
+        ret = ret * 0.75
     end
     return ret
 end
@@ -1023,7 +1038,7 @@ end
 
 -- Lowers the input authority setting for keyboard
 local function getEffectiveInputAuthority(filter)
-    return (filter == FILTER_KBD) and (steeringCfg["counterForce.inputAuthority"] * 0.6) or steeringCfg["counterForce.inputAuthority"]
+    return (filter == FILTER_KBD) and (steeringCfg["counterForce.inputAuthority"] * 0.75) or steeringCfg["counterForce.inputAuthority"]
 end
 
 -- local gxSmootherTest = RunningAverage:new(80)
@@ -1079,17 +1094,18 @@ local function processInput(e, dt)
         groundedSmooth = smoothstep(isGroundedSpeedCap:get(0, dt))
     end
 
-    -- 1 when trying to countersteer, 0 otherwise. The car has to be sliding at a certain angle before the input to correct the slide is considered countersteering.
-    local countersteerBlend     = (sign(originalInput) ~= sign(guardZero(avgRearWheelXVel)) and originalInputAbs > 1e-6) and inverseLerpClampedSoft(6, 18, rearSlipAngleAbs, 0, 1, 0.5) or 0.0;
+    -- true if steering outward
+    local isCountersteering = (sign(originalInput) ~= sign(guardZero(avgRearWheelXVel)) and originalInputAbs > 1e-6)
+    -- 1 when trying to countersteer, 0 otherwise. The car has to be sliding at a certain angle before steering outward is considered countersteering. This is used to blend between the inward and outward countersteer force.
+    local counterForceBlend = counterBlendSpeedCap:get(isCountersteering and inverseLerpClampedSoft(5, 12, rearSlipAngleAbs, 0, 1, 0.5) or 0.0, dt)
+    -- Same as the above, but starts rising at smaller angles of slide. This is used to blend between the inward and outward steering limit. This allows better manual countersteering in smaller slides compared to using the version above.
+    local steeringCapBlend  = manualCounterBlendCap:get(isCountersteering and inverseLerpClampedSoft(2, 4, rearSlipAngleAbs, 0, 1, 1) or 0.0, dt)
 
     -- 0 if driving offroad, 1 on hard surfaces. Only changed if more than half the wheels change surface type, frozen if at least half the wheels are airborne.
     local hardSurfaceVal        = getHardSurfaceVal(allWheelData, math.floor(#allWheelData * 0.5) + 1, lastHardSurfaceVal)--getHardSurfaceVal(allWheelData, lastHardSurfaceVal)
     lastHardSurfaceVal          = hardSurfaceVal
     -- local smoothHardSurfaceVal  = smootherstep(surfaceChangeSpeedCap:get(hardSurfaceVal, dt)) 
     local smoothHardSurfaceVal  = surfaceSmoother:get(hardSurfaceVal, dt) -- Smooth version
-
-    -- debugBar(vehicleTransform, countersteerBlend, 1, {255, 0, 0}, 0)
-    -- debugBar(vehicleTransform, rearSlipAngleAbs, 90, {255, 0, 255}, 1)
 
     -- ======================== Countersteer assist
 
@@ -1132,7 +1148,7 @@ local function processInput(e, dt)
     -- Returns the steering limit and countersteer force that would be in effect if the player was countersteering
     local function processInputCounter()
         local _counterForce    = normalizedSteeringToInput(counterForce)
-        local manualCounterCap = inverseLerpClamped(0, math.max(steeringLockRad, math.rad(8)), math.abs(travelDirectionRad) + math.rad(2), 0, 1) -- // FIXME travel direction??
+        local manualCounterCap = inverseLerpClamped(0, math.max(steeringLockRad, math.rad(8)), math.rad(rearSlipAngleAbs) + math.rad(4), 0, 1) -- // FIXME travel direction??
         manualCounterCap       = normalizedSteeringToInput(manualCounterCap)
         manualCounterCap       = clamp01(manualCounterCap - (sign(originalInput) * _counterForce))
         return manualCounterCap, _counterForce
@@ -1142,19 +1158,30 @@ local function processInput(e, dt)
     local capInward, counterForceInward   = processInputInward()
     local capOutward, counterForceOutward = processInputCounter()
 
+    -- Extra amount of steering limit due to drive torque on the steered wheels
+    local torqueSteerIncrease = 0
+
+    if any(steeredWheelData, function (w) return w.isPropulsed end) then
+        -- Average drive torque on the steered wheels, normalized and smoothed
+        local smoothSteeredTorqueFactor = steeredTorqueSmoother:get(clamp01((average(steeredWheelData, function(w) return w.propulsionTorque end) or 0.0) / 600), dt)
+
+        -- Average total grip factor of the front wheels, normalized and smoothed
+        local smoothSteeredGripFactor   = steeredGripSmoother:get(clamp01(getGripFactor(steeredWheelData) / 12.0), dt)
+
+        torqueSteerIncrease = (1.0 / steeringLockDeg) * smoothSteeredTorqueFactor * smoothSteeredGripFactor
+    end
+
     -- Final steering limit that will be applied
-    local effectiveCap = lerp(capInward, capOutward, countersteerBlend)
+    local effectiveCap = lerp(capInward, math.max(capOutward, capInward), steeringCapBlend) + torqueSteerIncrease
 
     -- Final countersteer force that will be applied
-    local effectiveCounterForce = lerp(counterForceInward, counterForceOutward, countersteerBlend)
+    local effectiveCounterForce = lerp(counterForceInward, counterForceOutward, counterForceBlend)
 
     -- Final processed input
     local finalAssistedInput = clamp(ival * effectiveCap + effectiveCounterForce, e.minLimit, e.maxLimit)
     ival = lerp(ival, finalAssistedInput, fadeIn)
 
-    -- debugBar(vehicleTransform, isCountersteering, 1, {255, 0, 0}, 0)
-
-    if steeringCfg["logData"] and localHVelKmh > 2 then
+    if isVehicleActive and steeringCfg["logData"] and localHVelKmh > 2 then
         print("====================================")
         print(string.format("Estimated steering lock:   %8.3f°", steeringLockDeg))
         -- print(string.format("Target steering limit:     %8.3f°", inputToNormalizedSteering(steeringLimit) * steeringLockDeg))
@@ -1163,8 +1190,8 @@ local function processInput(e, dt)
         print(string.format("Avg steered wheel slip:    %8.3f°", steeredSlipAngleAbs))
         print(string.format("Avg rear wheel slip:       %8.3f°", rearSlipAngleAbs))
         print(string.format("Travel Direction:          %8.3f°", math.deg(travelDirectionRad)))
-        print(string.format("Countersteering mode:      %8.1f%%", countersteerBlend * 100))
-        -- print(string.format("Counter force:             %8.3f°", inputToNormalizedSteering(effectiveCounterForce) * steeringLockDeg))
+        print(string.format("Automatic countersteer:    %8.3f°", inputToNormalizedSteering(effectiveCounterForce) * steeringLockDeg))
+        -- print(string.format("Countersteering mode:      %8.1f%%", steeringCapBlend * 100))
 
         -- print(string.format("Mass:                      %8.3f", vehicleMass()))
         -- print(string.format("Sidewall:                  %8.3f", steeredWheelData[1].sidewall))
@@ -1259,89 +1286,8 @@ local function padAccelerateBrake(val, filter)
   end
 end
 
--- ======================== Settings, GUI calls
-
-local defaultConfig = {
-    ["enableCustomSteering"]          = true,
-    ["logData"]                       = false,
-    ["steeringSpeed"]                 = 1.0,
-    ["relativeSteeringSpeed"]         = true,
-    ["steeringLimitOffset"]           = 0.0,
-    ["counterForce.useSteeredWheels"] = true,
-    ["counterForce.response"]         = 0.3,
-    ["counterForce.maxAngle"]         = 8.0,
-    ["counterForce.inputAuthority"]   = 0.6,
-    ["counterForce.damping"]          = 0.65,
-}
-
-local settingsFilePath = "settings/arcadeSteering/settings.json"
-
--- Returns a new object by merging `obj` into `ref`
-local function mergeObjects(ref, obj)
-    local ret = {}
-    for i,v in pairs(ref) do
-        if obj[i] ~= nil then
-            ret[i] = obj[i]
-        else
-            ret[i] = ref[i]
-        end
-    end
-    return ret
-end
-
-local function saveSettings(jsonStr, silent)
-    if disableArcadeSteering then return end
-
-    if jsonStr then
-        -- If settings are passed in, save those
-        local decoded = jsonDecode(jsonStr)
-        if decoded then
-            local saved = jsonWriteFile(settingsFilePath, mergeObjects(defaultConfig, decoded), true)
-            if not silent then guihooks.trigger("arcadeSteeringSettingsSaved", saved) end
-        elseif not silent then
-             guihooks.trigger("arcadeSteeringSettingsSaved", false)
-        end
-    else
-        -- If nothing is specified, save the current settings
-        local saved = jsonWriteFile(settingsFilePath, mergeObjects(defaultConfig, steeringCfg), true)
-        if not silent then guihooks.trigger("arcadeSteeringSettingsSaved", saved) end
-    end
-end
-
-local function loadSettings()
-    if disableArcadeSteering then return end
-
-    local decoded = jsonReadFile(settingsFilePath)
-
-    if not decoded then
-        log("W", logTag, "Failed to load Arcade Steering settings. Creating config file with the default settings ...")
-        steeringCfg = defaultConfig
-        saveSettings(nil, true)
-    else
-        steeringCfg = mergeObjects(defaultConfig, decoded)
-    end
-end
-
 local function reloadVehicle()
-    if disableArcadeSteering then return end
     obj:queueGameEngineLua("scenetree.findObjectById(" .. tostring(obj:getID()) .. "):reload()")
-end
-
-local function displayDefaultSettings()
-    if disableArcadeSteering then return end
-    guihooks.trigger("arcadeSteeringSetDisplayedSettings", { ["settings"] = defaultConfig, ["isDefault"] = true })
-end
-
-local function displayCurrentSettings()
-    if disableArcadeSteering then return end
-    guihooks.trigger("arcadeSteeringSetDisplayedSettings", { ["settings"] = steeringCfg })
-end
-
-local function applySettings(jsonStr)
-    if disableArcadeSteering then return end
-    local decoded = jsonDecode(jsonStr)
-    if decoded then steeringCfg = decoded end
-    guihooks.trigger("arcadeSteeringSettingsApplied", decoded and true or false)
 end
 
 -- ======================== Hijacking original functions, injecting custom input processing
@@ -1362,7 +1308,7 @@ local function restoreFunctionHooks()
     input.padAccelerateBrake = ogInputPadAccel
 end
 
-M.onExtensionLoaded = function()
+local function onEnabled()
 
     -- BeamMP remote vehicles and AI traffic
     if v.mpVehicleType == "R" or ai.mode ~= "disabled" or not v.data.controller or #v.data.controller == 0 then
@@ -1370,8 +1316,7 @@ M.onExtensionLoaded = function()
         return
     end
 
-    loadSettings()
-    displayCurrentSettings()
+    initialToggleSetting = steeringCfg["enableCustomSteering"]
 
     if not steeringCfg["enableCustomSteering"] or not v.data.input then return end
 
@@ -1453,16 +1398,52 @@ M.onExtensionLoaded = function()
     end
 end
 
-M.onReset = reset
-
-M.displayDefaultSettings = displayDefaultSettings
-M.displayCurrentSettings = displayCurrentSettings
-M.applySettings          = applySettings
-M.saveSettings           = saveSettings
-M.reloadVehicle          = reloadVehicle
-M.onPlayersChanged       = function(hasPlayer)
-    -- Workaround for the UI losing the config values when you switch to an AI car and then remove AI traffic then switch back to your car
-    if hasPlayer then displayCurrentSettings() end
+-- Returns a new object by merging `obj` into `ref`
+local function mergeObjects(ref, obj)
+    local ret = {}
+    for i,v in pairs(ref) do
+        if obj[i] ~= nil then
+            ret[i] = obj[i]
+        else
+            ret[i] = ref[i]
+        end
+    end
+    return ret
 end
+
+local function setConfig(cfg)
+    -- if disableArcadeSteering then return end
+
+    local firstCall = false
+    local newConfig = nil
+
+    if steeringCfg == nil then
+        newConfig = cfg
+        firstCall = true
+    else
+        newConfig = mergeObjects(steeringCfg, cfg)
+    end
+
+    steeringCfg = newConfig
+
+    if firstCall then
+        -- Initialize everything the first time the config is set
+        onEnabled()
+    end
+end
+
+local function onPlayersChanged(hasPlayer)
+    isVehicleActive = hasPlayer
+    if hasPlayer then
+        -- Has to be called from game engine lua because of a bug
+        obj:queueGameEngineLua("guihooks.trigger('arcadeSteeringSetDisplayedSettings', " .. serialize({ ["settings"] = steeringCfg, ["dirty"] = (initialToggleSetting ~= steeringCfg["enableCustomSteering"] and initialToggleSetting ~= nil) }) .. ")")
+    end
+end
+
+M.onReset           = reset
+M.onPlayersChanged  = onPlayersChanged
+
+M.reloadVehicle     = reloadVehicle
+M.setConfig         = setConfig
 
 return M
