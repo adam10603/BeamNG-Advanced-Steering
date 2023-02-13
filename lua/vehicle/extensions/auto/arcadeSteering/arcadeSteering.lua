@@ -992,7 +992,7 @@ local function getSteeringLimit(allWheelData, velLen, effectiveAuthority, dt)
     -- print(string.format("Authority correction: %8.3f", authorityCorrection))
     -- print(string.format("Limit correction: %8.3f", getLimitCorrection(allWheelData)))
 
-    return clamp01((desiredLimitRad + math.rad(0.3)) / steeringLockRad) -- was 0.2
+    return clamp01((desiredLimitRad + math.rad(0.2)) / steeringLockRad)
 end
 
 local function getHardSurfaceVal(allWheelData, minGroundedWheels, lastVal)
