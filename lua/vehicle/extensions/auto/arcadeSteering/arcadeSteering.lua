@@ -131,11 +131,11 @@ local function isBetween(val, A, B)
     return (val >= math.min(A, B)) and (val <= math.max(A, B))
 end
 
--- Like a clamp, but the output has a smooth transition to the min and max values instead of a sudden cutoff.
--- `transitionWindow` should be between `0.0` - `1.0`, it's normalized to the range given by `minVal` - `maxVal`.
--- Example graph of `clampSoft(x, 0.0, 1.0, 0.4)` : https://i.imgur.com/hDbaAUO.png
-local function clampSoft(val, minVal, maxVal, transitionWindow)
-    local windowScaled     = transitionWindow * (maxVal - minVal)
+-- Like a clamp, but the output has a smooth transition (parabolic easing) to the min and max values instead of a sudden cutoff.
+-- `easingWindow` should be between `0.0` - `1.0`, it's normalized to the range given by `minVal` - `maxVal`.
+-- Example graph of `clampEased(x, 0.0, 10.0, 0.4)` : https://i.imgur.com/WY9zYHK.png
+local function clampEased(val, minVal, maxVal, easingWindow)
+    local windowScaled     = easingWindow * (maxVal - minVal)
     local halfWindowScaled = windowScaled * 0.5
     local minLow           = minVal - halfWindowScaled
     local minHigh          = minVal + halfWindowScaled
@@ -161,8 +161,8 @@ local function inverseLerpClamped(from, to, val, outMin, outMax)
     return clamp(inverseLerp(from, to, val), outMin, outMax)
 end
 
-local function inverseLerpClampedSoft(from, to, val, outMin, outMax, transitionWindow)
-    return clampSoft(inverseLerp(from, to, val), outMin, outMax, transitionWindow)
+local function inverseLerpClampedEased(from, to, val, outMin, outMax, transitionWindow)
+    return clampEased(inverseLerp(from, to, val), outMin, outMax, transitionWindow)
 end
 
 local function subtractTowardsZero(val, sub, dontFlipSign)
@@ -1045,13 +1045,13 @@ local function getBaseCountersteerForce(sourceWheelData, localHVelKmh, baseSteer
     local avgWheelVelFwdLen      = avgWheelVelFwd:length()
     local avgWheelVelocityAngle  = math.deg(angleBetween(avgWheelVelFwd, vec3(0, -1, 0), avgWheelVelFwdLen, 1)) -- Average angle of the horizontal wheel velocity vectors in the car's coordinate space
     local inwardAngleSub         = steeringCfg["counterForce.useSteeredWheels"] and 3.0 or 4.0 -- How much angle (deg) to subtract from the average wheel velocity angle to leave an "inner deadzone" for the countersteer force when turning inward
-    local avgWheelVelocityAngle2 = clampSoft(avgWheelVelocityAngle - inwardAngleSub, 0.0, 180.0, 2.0 / 180.0) * (90 / (90 - inwardAngleSub)) -- The "2" versions are for turning inwards
+    local avgWheelVelocityAngle2 = clampEased(avgWheelVelocityAngle - inwardAngleSub, 0.0, 180.0, 2.0 / 180.0) * (90 / (90 - inwardAngleSub)) -- The "2" versions are for turning inwards
     local avgWheelVelXSign       = sign(guardZero(-avgWheelVelFwd.x))
     local correctionBaseMult     = avgWheelVelFwdLen / referenceWVel * carCorrection * 0.0171 -- The magic number is to get the same magnitude as the old method I was using so the rest of the math can be the same
     local correctionBase         = (avgWheelVelXSign * avgWheelVelocityAngle) * correctionBaseMult
     local correctionBase2        = (avgWheelVelXSign * avgWheelVelocityAngle2) * correctionBaseMult
-    local counterForce           = counterAssistSmoother:getWithSpeedMult(clampSoft(correctionBase, -1, 1, 0.2), dt, baseSteeringSpeedMult) -- // TODO clampSoft maybe?
-    local counterForce2          = counterAssistSmoother2:getWithSpeedMult(clampSoft(correctionBase2, -1, 1, 0.2), dt, baseSteeringSpeedMult) -- // TODO clampSoft maybe?
+    local counterForce           = counterAssistSmoother:getWithSpeedMult(clampEased(correctionBase, -1, 1, 0.2), dt, baseSteeringSpeedMult) -- // TODO clampSoft maybe?
+    local counterForce2          = counterAssistSmoother2:getWithSpeedMult(clampEased(correctionBase2, -1, 1, 0.2), dt, baseSteeringSpeedMult) -- // TODO clampSoft maybe?
     local counterCap             = clamp(steeringCfg["counterForce.maxAngle"], 0, steeringLockDeg) / steeringLockDeg
 
     local dampingStrength        = (1.0 - originalInputAbs) -- Lessens the damping force as more steering input is applied. Damping is much more important when the automatic countersteer force is acting alone with no user input.
@@ -1060,8 +1060,8 @@ local function getBaseCountersteerForce(sourceWheelData, localHVelKmh, baseSteer
 
     local offroadCorrection      = lerp(offroadCounterMult, 1, smoothHardSurfaceVal)
 
-    counterForce                 = clampSoft(counterForce  + dampingForce, -counterCap, counterCap, 0.4) * offroadCorrection
-    counterForce2                = clampSoft(counterForce2 + dampingForce, -counterCap, counterCap, 0.4) * offroadCorrection
+    counterForce                 = clampEased(counterForce  + dampingForce, -counterCap, counterCap, 0.4) * offroadCorrection
+    counterForce2                = clampEased(counterForce2 + dampingForce, -counterCap, counterCap, 0.4) * offroadCorrection
 
     return counterForce, counterForce2
 end
@@ -1071,7 +1071,7 @@ local function getEffectiveInputAuthority(filter)
     return (filter == FILTER_KBD) and (steeringCfg["counterForce.inputAuthority"] * 0.75) or steeringCfg["counterForce.inputAuthority"]
 end
 
--- local gxSmootherTest = RunningAverage:new(80)
+-- local gxSmootherTest = RunningAverage:new(100)
 
 local function processInput(e, dt)
 
@@ -1118,9 +1118,9 @@ local function processInput(e, dt)
     -- true if steering outward
     local isCountersteering = (sign(originalInput) ~= sign(guardZero(avgRearWheelXVel)) and originalInputAbs > 1e-6)
     -- 1 when trying to countersteer, 0 otherwise, smooth. The car has to be sliding at a certain angle before steering outward is considered countersteering. This is used to blend between the inward and outward countersteer force.
-    local counterForceBlend = counterBlendSpeedCap:get(isCountersteering and inverseLerpClampedSoft(5, 12, rearSlipAngleAbs, 0, 1, 0.5) or 0.0, dt)
+    local counterForceBlend = counterBlendSpeedCap:get(isCountersteering and inverseLerpClampedEased(5, 12, rearSlipAngleAbs, 0, 1, 0.5) or 0.0, dt)
     -- Same as the above, but starts rising at smaller angles of slide. This is used to blend between the inward and outward steering limit. This allows better manual countersteering in smaller slides compared to using the version above.
-    local steeringCapBlend  = manualCounterBlendCap:get(isCountersteering and inverseLerpClampedSoft(2, 4, rearSlipAngleAbs, 0, 1, 1) or 0.0, dt)
+    local steeringCapBlend  = manualCounterBlendCap:get(isCountersteering and inverseLerpClampedEased(2, 4, rearSlipAngleAbs, 0, 1, 1) or 0.0, dt)
 
     -- 0 if driving offroad, 1 on hard surfaces. Only changed if more than half the wheels change surface type, frozen if at least half the wheels are airborne.
     local hardSurfaceVal        = getHardSurfaceVal(allWheelData, math.floor(#allWheelData * 0.5) + 1, lastHardSurfaceVal)--getHardSurfaceVal(allWheelData, lastHardSurfaceVal)
