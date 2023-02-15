@@ -131,11 +131,11 @@ local function isBetween(val, A, B)
     return (val >= math.min(A, B)) and (val <= math.max(A, B))
 end
 
--- Like a clamp, but the output has a smooth transition to the min and max values instead of a sudden cutoff.
--- `transitionWindow` should be between `0.0` - `1.0`, it's normalized to the range given by `minVal` - `maxVal`.
--- Example graph of `clampSoft(x, 0.0, 1.0, 0.4)` : https://i.imgur.com/hDbaAUO.png
-local function clampSoft(val, minVal, maxVal, transitionWindow)
-    local windowScaled     = transitionWindow * (maxVal - minVal)
+-- Like a clamp, but the output has a smooth transition (parabolic easing) to the min and max values instead of a sudden cutoff.
+-- `easingWindow` should be between `0.0` - `1.0`, it's normalized to the range given by `minVal` - `maxVal`.
+-- Example graph of `clampEased(x, 0.0, 10.0, 0.4)` : https://i.imgur.com/WY9zYHK.png
+local function clampEased(val, minVal, maxVal, easingWindow)
+    local windowScaled     = easingWindow * (maxVal - minVal)
     local halfWindowScaled = windowScaled * 0.5
     local minLow           = minVal - halfWindowScaled
     local minHigh          = minVal + halfWindowScaled
@@ -161,8 +161,8 @@ local function inverseLerpClamped(from, to, val, outMin, outMax)
     return clamp(inverseLerp(from, to, val), outMin, outMax)
 end
 
-local function inverseLerpClampedSoft(from, to, val, outMin, outMax, transitionWindow)
-    return clampSoft(inverseLerp(from, to, val), outMin, outMax, transitionWindow)
+local function inverseLerpClampedEased(from, to, val, outMin, outMax, transitionWindow)
+    return clampEased(inverseLerp(from, to, val), outMin, outMax, transitionWindow)
 end
 
 local function subtractTowardsZero(val, sub, dontFlipSign)
@@ -351,6 +351,7 @@ local avgPressureAtStart        = -1 -- The average tire pressure when the vehic
 local disableArcadeSteering     = false -- If true, the mod will restore all the original input functionality and disable itself on the next frame (for this vehicle only)
 local initialToggleSetting      = nil
 local isVehicleActive           = false
+local maxTorqueSteer            = 1.0 -- Deg
 
 -- =================== State (things that need to be reset)
 
@@ -711,9 +712,9 @@ local function customPhysicsStep(dtPhys)
 
     if calibrationStage == 2 then
         calibrationStage    = 3
-        calibratedLockRad   = calibratedLockRad * 1.03
-        calibrationExpXY[2] = calibrationExpXY[2] * 1.03 -- The angles usually measure slightly low
-        calibrationExpXY[2] = calibrationExpXY[2] / calibratedLockRad + 0.01 -- The curve usually ends up slightly low too
+        calibratedLockRad   = calibratedLockRad * 1.02
+        calibrationExpXY[2] = calibrationExpXY[2] * 1.02 -- The angles usually measure slightly low
+        calibrationExpXY[2] = calibrationExpXY[2] / calibratedLockRad - 0.01 -- A small correction is needed to the curve because of the angle adjustments
         local exponent      = getSteeringCurveExponent(calibrationExpXY[1], calibrationExpXY[2])
 
         steeringCurveExp = clamp(exponent, 0.7, 1.3)
@@ -961,7 +962,7 @@ local function getLimitCorrection(allWheelData)
     return clamp(correction, 3, 6)
 end
 
--- Returns the steering limit as an input value (0-1)
+-- Returns the steering limit normalized to the steering lock (0-1)
 local function getSteeringLimit(allWheelData, velLen, effectiveAuthority, dt)
     --  Top down view, car is going north, turning right
     --
@@ -983,7 +984,7 @@ local function getSteeringLimit(allWheelData, velLen, effectiveAuthority, dt)
     local c                   = math.sqrt(a * a + b * b) -- // FIXME use steered wheel pos or something instead of entire wheelbase // FIXME remove fixme because its probably fine
     local beta                = math.asin(b / c)
     local desiredLimitRad     = (math.pi * 0.5) - beta -- Steering angle at which the wheels' normal would point to the center of the turning circle
-    local authorityCorrection = (1.0 - effectiveAuthority) * 0.5 * steeringCfg["counterForce.response"] * inverseLerpClamped(0, 0.5, steeringCfg["counterForce.maxAngle"], 0, 1) -- Depends on how the input authority is processed. Changing the countersteer force behavior will require a change to this.
+    local authorityCorrection = (1.0 - effectiveAuthority) * 0.4 * steeringCfg["counterForce.response"] * inverseLerpClamped(0, 0.5, steeringCfg["counterForce.maxAngle"], 0, 1) -- Depends on how the input authority is processed. Changing the countersteer force behavior will require a change to this.
     desiredLimitRad           = desiredLimitRad + math.rad(getLimitCorrection(allWheelData)) + math.rad(authorityCorrection) + math.rad(steeringCfg["steeringLimitOffset"])
 
     -- print(b)
@@ -991,7 +992,7 @@ local function getSteeringLimit(allWheelData, velLen, effectiveAuthority, dt)
     -- print(string.format("Authority correction: %8.3f", authorityCorrection))
     -- print(string.format("Limit correction: %8.3f", getLimitCorrection(allWheelData)))
 
-    return normalizedSteeringToInput(clamp01((desiredLimitRad + math.rad(0.5)) / steeringLockRad)) -- was 0.2
+    return clamp01((desiredLimitRad + math.rad(0.2)) / steeringLockRad)
 end
 
 local function getHardSurfaceVal(allWheelData, minGroundedWheels, lastVal)
@@ -1006,7 +1007,36 @@ local function getHardSurfaceVal(allWheelData, minGroundedWheels, lastVal)
     else return ratio end
 end
 
--- As normalized steering, not input
+-- Returns the increase to the steering limit due to torque steer (typically FWD or AWD cars under acceleration)
+local function getTorqueSteerAmount(steeredWheelData, dt)
+
+    if not any(steeredWheelData, function (w) return w.isPropulsed end) then
+        return 0
+    end
+
+    -- Average drive torque on the steered wheels, normalized and smoothed
+    local smoothSteeredTorqueFactor = steeredTorqueSmoother:get(clamp01((average(steeredWheelData, function(w) return w.propulsionTorque end) or 0.0) / 600), dt)
+
+    -- Average total grip factor of the front wheels, normalized and smoothed
+    local smoothSteeredGripFactor   = steeredGripSmoother:get(clamp01(getGripFactor(steeredWheelData) / 12.0), dt)
+
+    return (maxTorqueSteer / steeringLockDeg) * smoothSteeredTorqueFactor * smoothSteeredGripFactor
+end
+
+-- Returns a smooth 0-1 value that indicates if any steered wheels are grounded
+local function getSteeredWheelGroundedFactor(steeredWheelData, dt)
+    local groundedSmooth = 0.0
+
+    if any(steeredWheelData, function(w) return w.isGrounded end) then
+        groundedSmooth = smoothstep(isGroundedSpeedCap:get(1, dt))
+    else
+        groundedSmooth = smoothstep(isGroundedSpeedCap:get(0, dt))
+    end
+
+    return groundedSmooth
+end
+
+-- Returns the automatic countersteer force for two scenarios: no player input or countersteering, and the player turning inward. The force is in normalized steering amount.
 local function getBaseCountersteerForce(sourceWheelData, localHVelKmh, baseSteeringSpeedMult, smoothHardSurfaceVal, yawAngularVel, originalInputAbs, dt)
     local carCorrection          = 31.5 / steeringLockDeg -- Correction factor for the max steering lock
     local referenceWVel          = 50 - (40 * steeringCfg["counterForce.response"]) -- Scales the countersteer force based on the response setting
@@ -1015,13 +1045,13 @@ local function getBaseCountersteerForce(sourceWheelData, localHVelKmh, baseSteer
     local avgWheelVelFwdLen      = avgWheelVelFwd:length()
     local avgWheelVelocityAngle  = math.deg(angleBetween(avgWheelVelFwd, vec3(0, -1, 0), avgWheelVelFwdLen, 1)) -- Average angle of the horizontal wheel velocity vectors in the car's coordinate space
     local inwardAngleSub         = steeringCfg["counterForce.useSteeredWheels"] and 3.0 or 4.0 -- How much angle (deg) to subtract from the average wheel velocity angle to leave an "inner deadzone" for the countersteer force when turning inward
-    local avgWheelVelocityAngle2 = clampSoft(avgWheelVelocityAngle - inwardAngleSub, 0.0, 180.0, 2.0 / 180.0) * (90 / (90 - inwardAngleSub)) -- The "2" versions are for turning inwards
+    local avgWheelVelocityAngle2 = clampEased(avgWheelVelocityAngle - inwardAngleSub, 0.0, 180.0, 2.0 / 180.0) * (90 / (90 - inwardAngleSub)) -- The "2" versions are for turning inwards
     local avgWheelVelXSign       = sign(guardZero(-avgWheelVelFwd.x))
     local correctionBaseMult     = avgWheelVelFwdLen / referenceWVel * carCorrection * 0.0171 -- The magic number is to get the same magnitude as the old method I was using so the rest of the math can be the same
     local correctionBase         = (avgWheelVelXSign * avgWheelVelocityAngle) * correctionBaseMult
     local correctionBase2        = (avgWheelVelXSign * avgWheelVelocityAngle2) * correctionBaseMult
-    local counterForce           = counterAssistSmoother:getWithSpeedMult(clampSoft(correctionBase, -1, 1, 0.2), dt, baseSteeringSpeedMult) -- // TODO clampSoft maybe?
-    local counterForce2          = counterAssistSmoother2:getWithSpeedMult(clampSoft(correctionBase2, -1, 1, 0.2), dt, baseSteeringSpeedMult) -- // TODO clampSoft maybe?
+    local counterForce           = counterAssistSmoother:getWithSpeedMult(clampEased(correctionBase, -1, 1, 0.2), dt, baseSteeringSpeedMult) -- // TODO clampSoft maybe?
+    local counterForce2          = counterAssistSmoother2:getWithSpeedMult(clampEased(correctionBase2, -1, 1, 0.2), dt, baseSteeringSpeedMult) -- // TODO clampSoft maybe?
     local counterCap             = clamp(steeringCfg["counterForce.maxAngle"], 0, steeringLockDeg) / steeringLockDeg
 
     local dampingStrength        = (1.0 - originalInputAbs) -- Lessens the damping force as more steering input is applied. Damping is much more important when the automatic countersteer force is acting alone with no user input.
@@ -1030,8 +1060,8 @@ local function getBaseCountersteerForce(sourceWheelData, localHVelKmh, baseSteer
 
     local offroadCorrection      = lerp(offroadCounterMult, 1, smoothHardSurfaceVal)
 
-    counterForce                 = clampSoft(counterForce  + dampingForce, -counterCap, counterCap, 0.4) * offroadCorrection
-    counterForce2                = clampSoft(counterForce2 + dampingForce, -counterCap, counterCap, 0.4) * offroadCorrection
+    counterForce                 = clampEased(counterForce  + dampingForce, -counterCap, counterCap, 0.4) * offroadCorrection
+    counterForce2                = clampEased(counterForce2 + dampingForce, -counterCap, counterCap, 0.4) * offroadCorrection
 
     return counterForce, counterForce2
 end
@@ -1041,7 +1071,7 @@ local function getEffectiveInputAuthority(filter)
     return (filter == FILTER_KBD) and (steeringCfg["counterForce.inputAuthority"] * 0.75) or steeringCfg["counterForce.inputAuthority"]
 end
 
--- local gxSmootherTest = RunningAverage:new(80)
+-- local gxSmootherTest = RunningAverage:new(100)
 
 local function processInput(e, dt)
 
@@ -1079,37 +1109,27 @@ local function processInput(e, dt)
     local yawAngularVel        = stablePhysicsData.yawAngularVel:get() or 0.0
 
     local avgRearWheelXVel     = average(rearWheelData, fWheelVehXVel) or 0.0
-
-    -- local steeredSlipAngle     = math.deg(average(steeredWheelData, fWheelSlipAngle) or 0)
     local steeredSlipAngleAbs  = math.deg(average(steeredWheelData, fWheelSlipAngleAbs) or 0)
-    -- local rearSlipAngle        = math.deg((average(rearWheelData, fWheelSlipAngle) or 0))
     local rearSlipAngleAbs     = math.deg((average(rearWheelData, fWheelSlipAngleAbs) or 0))
 
     -- 1 if at least one of the steered wheels is grounded, 0 otherwise. Basically a boolean with smoothing to prevent an instant transition.
-    local groundedSmooth = 0.0
-
-    if any(steeredWheelData, function(wheel) return wheel.isGrounded end) then
-        groundedSmooth = smoothstep(isGroundedSpeedCap:get(1, dt))
-    else
-        groundedSmooth = smoothstep(isGroundedSpeedCap:get(0, dt))
-    end
+    local groundedSmooth    = getSteeredWheelGroundedFactor(steeredWheelData, dt)
 
     -- true if steering outward
     local isCountersteering = (sign(originalInput) ~= sign(guardZero(avgRearWheelXVel)) and originalInputAbs > 1e-6)
-    -- 1 when trying to countersteer, 0 otherwise. The car has to be sliding at a certain angle before steering outward is considered countersteering. This is used to blend between the inward and outward countersteer force.
-    local counterForceBlend = counterBlendSpeedCap:get(isCountersteering and inverseLerpClampedSoft(5, 12, rearSlipAngleAbs, 0, 1, 0.5) or 0.0, dt)
+    -- 1 when trying to countersteer, 0 otherwise, smooth. The car has to be sliding at a certain angle before steering outward is considered countersteering. This is used to blend between the inward and outward countersteer force.
+    local counterForceBlend = counterBlendSpeedCap:get(isCountersteering and inverseLerpClampedEased(5, 12, rearSlipAngleAbs, 0, 1, 0.5) or 0.0, dt)
     -- Same as the above, but starts rising at smaller angles of slide. This is used to blend between the inward and outward steering limit. This allows better manual countersteering in smaller slides compared to using the version above.
-    local steeringCapBlend  = manualCounterBlendCap:get(isCountersteering and inverseLerpClampedSoft(2, 4, rearSlipAngleAbs, 0, 1, 1) or 0.0, dt)
+    local steeringCapBlend  = manualCounterBlendCap:get(isCountersteering and inverseLerpClampedEased(2, 4, rearSlipAngleAbs, 0, 1, 1) or 0.0, dt)
 
     -- 0 if driving offroad, 1 on hard surfaces. Only changed if more than half the wheels change surface type, frozen if at least half the wheels are airborne.
     local hardSurfaceVal        = getHardSurfaceVal(allWheelData, math.floor(#allWheelData * 0.5) + 1, lastHardSurfaceVal)--getHardSurfaceVal(allWheelData, lastHardSurfaceVal)
     lastHardSurfaceVal          = hardSurfaceVal
-    -- local smoothHardSurfaceVal  = smootherstep(surfaceChangeSpeedCap:get(hardSurfaceVal, dt)) 
     local smoothHardSurfaceVal  = surfaceSmoother:get(hardSurfaceVal, dt) -- Smooth version
 
     -- ======================== Countersteer assist
 
-    local counterForce, counterForce2 = getBaseCountersteerForce(
+    local counterForce, counterForceInward = getBaseCountersteerForce(
         steeringCfg["counterForce.useSteeredWheels"] and steeredWheelData or rearWheelData,
         localHVelKmh,
         baseSteeringSpeedMult,
@@ -1119,8 +1139,8 @@ local function processInput(e, dt)
         dt
     )
 
-    counterForce = counterForce * groundedSmooth
-    counterForce2 = counterForce2 * groundedSmooth
+    counterForce       = counterForce * groundedSmooth
+    counterForceInward = counterForceInward * groundedSmooth
 
     -- ======================== Calculating the steering limit and final countersteer force
 
@@ -1132,53 +1152,34 @@ local function processInput(e, dt)
         local counterStrength = clamp01((1.0 - originalInputAbs) * effectiveAuthority + (1.0 - effectiveAuthority))
         local counterForceLF  = counterForceLPF:get(counterForce, dt)
         local counterForceHF  = counterForce - counterForceLF
-        local counterForce2LF = counterForce2LPF:get(counterForce2, dt)
-        local _counterForce   = normalizedSteeringToInput(lerp(counterForceLF, counterForce2LF, originalInputAbs) * counterStrength + counterForceHF)
+        local counterForce2LF = counterForce2LPF:get(counterForceInward, dt)
+        local _counterForce   = lerp(counterForceLF, counterForce2LF, originalInputAbs) * counterStrength + counterForceHF
 
-        -- debugBar(vehicleTransform, counterForceLF, 0.5, {255, 0, 0}, 0)
-        -- debugBar(vehicleTransform, counterForce2LF, 0.5, {0, 255, 0}, 1)
-        -- debugBar(vehicleTransform, counterForceHF, 0.5, {0, 0, 255}, 2)
-        -- debugBar(vehicleTransform, lerp(counterForceLF, counterForce2LF, originalInputAbs) * counterStrength + counterForceHF, 0.5, {255, 0, 255}, 3)
-
-        local offroadOffset   = (1 - smoothHardSurfaceVal) * normalizedSteeringToInput(clamp01(offroadCapIncreaseDeg / steeringLockDeg))
+        local offroadOffset   = (1 - smoothHardSurfaceVal) * clamp01(offroadCapIncreaseDeg / steeringLockDeg)
         local limit           = clamp01(steeringLimit + offroadOffset)
         return limit, _counterForce
     end
 
     -- Returns the steering limit and countersteer force that would be in effect if the player was countersteering
     local function processInputCounter()
-        local _counterForce    = normalizedSteeringToInput(counterForce)
         local manualCounterCap = inverseLerpClamped(0, math.max(steeringLockRad, math.rad(8)), math.rad(rearSlipAngleAbs) + math.rad(4), 0, 1) -- // FIXME travel direction??
-        manualCounterCap       = normalizedSteeringToInput(manualCounterCap)
-        manualCounterCap       = clamp01(manualCounterCap - (sign(originalInput) * _counterForce))
-        return manualCounterCap, _counterForce
+        manualCounterCap       = manualCounterCap
+        manualCounterCap       = clamp01(manualCounterCap - (sign(originalInput) * counterForce))
+        return manualCounterCap, counterForce
     end
 
     -- Calculating the limit and countersteer force both as if the player was turning inward or coutersteering. We'll lerp between them as needed.
     local capInward, counterForceInward   = processInputInward()
     local capOutward, counterForceOutward = processInputCounter()
 
-    -- Extra amount of steering limit due to drive torque on the steered wheels
-    local torqueSteerIncrease = 0
-
-    if any(steeredWheelData, function (w) return w.isPropulsed end) then
-        -- Average drive torque on the steered wheels, normalized and smoothed
-        local smoothSteeredTorqueFactor = steeredTorqueSmoother:get(clamp01((average(steeredWheelData, function(w) return w.propulsionTorque end) or 0.0) / 600), dt)
-
-        -- Average total grip factor of the front wheels, normalized and smoothed
-        local smoothSteeredGripFactor   = steeredGripSmoother:get(clamp01(getGripFactor(steeredWheelData) / 12.0), dt)
-
-        torqueSteerIncrease = (1.0 / steeringLockDeg) * smoothSteeredTorqueFactor * smoothSteeredGripFactor
-    end
-
     -- Final steering limit that will be applied
-    local effectiveCap = lerp(capInward, math.max(capOutward, capInward), steeringCapBlend) + torqueSteerIncrease
+    local effectiveCap = lerp(capInward, math.max(capOutward, capInward), steeringCapBlend) + getTorqueSteerAmount(steeredWheelData, dt)
 
     -- Final countersteer force that will be applied
     local effectiveCounterForce = lerp(counterForceInward, counterForceOutward, counterForceBlend)
 
     -- Final processed input
-    local finalAssistedInput = clamp(ival * effectiveCap + effectiveCounterForce, e.minLimit, e.maxLimit)
+    local finalAssistedInput = normalizedSteeringToInput(clamp(ival * effectiveCap + effectiveCounterForce, -1, 1))
     ival = lerp(ival, finalAssistedInput, fadeIn)
 
     if isVehicleActive and steeringCfg["logData"] and localHVelKmh > 2 then
@@ -1190,7 +1191,7 @@ local function processInput(e, dt)
         print(string.format("Avg steered wheel slip:    %8.3f°", steeredSlipAngleAbs))
         print(string.format("Avg rear wheel slip:       %8.3f°", rearSlipAngleAbs))
         print(string.format("Travel Direction:          %8.3f°", math.deg(travelDirectionRad)))
-        print(string.format("Automatic countersteer:    %8.3f°", inputToNormalizedSteering(effectiveCounterForce) * steeringLockDeg))
+        print(string.format("Automatic countersteer:    %8.3f°", effectiveCounterForce * steeringLockDeg))
         -- print(string.format("Countersteering mode:      %8.1f%%", steeringCapBlend * 100))
 
         -- print(string.format("Mass:                      %8.3f", vehicleMass()))
