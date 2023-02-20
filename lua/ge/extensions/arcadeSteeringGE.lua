@@ -22,11 +22,12 @@ local defaultConfig = {
     ["steeringSpeed"]                 = 1.0,
     ["relativeSteeringSpeed"]         = true,
     ["steeringLimitOffset"]           = 0.0,
+    ["countersteerLimitOffset"]       = 5.0,
     ["counterForce.useSteeredWheels"] = true,
-    ["counterForce.response"]         = 0.25,
+    ["counterForce.response"]         = 0.2,
     ["counterForce.maxAngle"]         = 8.0,
-    ["counterForce.inputAuthority"]   = 0.6,
-    ["counterForce.damping"]          = 0.65,
+    ["counterForce.inputAuthority"]   = 0.7,
+    ["counterForce.damping"]          = 0.7,
 }
 
 local steeringCfg = mergeObjects(defaultConfig, {})

@@ -20,8 +20,14 @@
                     </div>
                 </div>
             </dd>
-            <dt><h4>Steering</h4></dt>
+            <dt><h4>Steering input</h4></dt>
             <dd>
+                <div class="input-line">
+                    <label>Relative steering speed</label>
+                    <div class="input-container">
+                        <input id="cfg-relativeSteeringSpeed" value="0" type="checkbox"/>
+                    </div>
+                </div>
                 <div class="input-line">
                     <label>Steering speed</label>
                     <div class="input-container">
@@ -30,18 +36,18 @@
                 </div>
                 <div class="input-line">
                     <label>Steering limit offset</label>
-                    <div class="formatted-input-container input-format-degree">
+                    <div class="formatted-input-container input-format-degree input-format-offset">
                         <input id="cfg-steeringLimitOffset" value="0" type="number" min="-5" max="5" step="0.1"/>
                     </div>
                 </div>
                 <div class="input-line">
-                    <label>Relative steering speed</label>
-                    <div class="input-container">
-                        <input id="cfg-relativeSteeringSpeed" value="0" type="checkbox"/>
+                    <label>Countersteer limit offset</label>
+                    <div class="formatted-input-container input-format-degree input-format-offset">
+                        <input id="cfg-countersteerLimitOffset" value="0" type="number" min="0" max="10" step="0.1"/>
                     </div>
                 </div>
             </dd>
-            <dt><h4>Countersteer force</h4></dt>
+            <dt><h4>Countersteer assist</h4></dt>
             <dd>
                 <div class="input-line">
                     <label>Use steered wheels</label>
