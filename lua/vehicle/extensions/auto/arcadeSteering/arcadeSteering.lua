@@ -368,7 +368,7 @@ local lastHardSurfaceVal        = 1 -- 0 if driving offroad, 1 on hard surfaces.
 local counterForceLPF           = newTemporalSmoothingNonLinear(30, 30, 0) -- Low pass filters for the automatic countersteer force. These are used to let small vibrations through even when the countersteer force is meant to be suppressed.
 local counterForce2LPF          = newTemporalSmoothingNonLinear(30, 30, 0)
 local counterBlendSpeedCap      = newTemporalSmoothing(6.0, 6.0, 6.0, 0)
-local manualCounterBlendCap     = newTemporalSmoothing(6.0, 6.0, 6.0, 0)
+local manualCounterBlendCap     = newTemporalSmoothingNonLinear(10, 10, 0)
 local steeredTorqueSmoother     = newTemporalSmoothingNonLinear(8, 8, 0)
 local steeredGripSmoother       = newTemporalSmoothingNonLinear(8, 8, 0)
 
@@ -714,7 +714,7 @@ local function customPhysicsStep(dtPhys)
         calibrationStage    = 3
         calibratedLockRad   = calibratedLockRad * 1.02
         calibrationExpXY[2] = calibrationExpXY[2] * 1.02 -- The angles usually measure slightly low
-        calibrationExpXY[2] = calibrationExpXY[2] / calibratedLockRad - 0.01 -- A small correction is needed to the curve because of the angle adjustments
+        calibrationExpXY[2] = calibrationExpXY[2] / calibratedLockRad + 0.001 -- A small correction is needed to the curve because of the angle adjustments
         local exponent      = getSteeringCurveExponent(calibrationExpXY[1], calibrationExpXY[2])
 
         steeringCurveExp = clamp(exponent, 0.7, 1.3)
@@ -923,7 +923,7 @@ local function getSteeringSpeedMult(filter, baseSteeringSpeedMult)
     local ret = steeringCfg["steeringSpeed"] * ((electrics.values.airspeed / 150.0) + 1.0) -- // TODO add a config value for this or something
     ret       = ret * baseSteeringSpeedMult
     if filter == FILTER_KBD then
-        ret = ret * 0.75
+        ret = ret * 0.7
     end
     return ret
 end
@@ -992,7 +992,7 @@ local function getSteeringLimit(allWheelData, velLen, effectiveAuthority, dt)
     -- print(string.format("Authority correction: %8.3f", authorityCorrection))
     -- print(string.format("Limit correction: %8.3f", getLimitCorrection(allWheelData)))
 
-    return clamp01((desiredLimitRad + math.rad(0.2)) / steeringLockRad)
+    return clamp01((desiredLimitRad + math.rad(0.4)) / steeringLockRad)
 end
 
 local function getHardSurfaceVal(allWheelData, minGroundedWheels, lastVal)
@@ -1068,7 +1068,7 @@ end
 
 -- Lowers the input authority setting for keyboard
 local function getEffectiveInputAuthority(filter)
-    return (filter == FILTER_KBD) and (steeringCfg["counterForce.inputAuthority"] * 0.75) or steeringCfg["counterForce.inputAuthority"]
+    return (filter == FILTER_KBD) and (steeringCfg["counterForce.inputAuthority"] * 0.7) or steeringCfg["counterForce.inputAuthority"]
 end
 
 -- local gxSmootherTest = RunningAverage:new(100)
@@ -1160,9 +1160,11 @@ local function processInput(e, dt)
         return limit, _counterForce
     end
 
+    local counterLimitOffset = clamp(1 - rearSlipAngleAbs / 180.0, 0.5, 1.0) * steeringCfg["countersteerLimitOffset"]
+
     -- Returns the steering limit and countersteer force that would be in effect if the player was countersteering
     local function processInputCounter()
-        local manualCounterCap = inverseLerpClamped(0, math.max(steeringLockRad, math.rad(8)), math.rad(rearSlipAngleAbs) + math.rad(4), 0, 1) -- // FIXME travel direction??
+        local manualCounterCap = inverseLerpClamped(0, math.max(steeringLockDeg, 8), rearSlipAngleAbs + counterLimitOffset, 0, 1) -- // FIXME travel direction??
         manualCounterCap       = manualCounterCap
         manualCounterCap       = clamp01(manualCounterCap - (sign(originalInput) * counterForce))
         return manualCounterCap, counterForce
