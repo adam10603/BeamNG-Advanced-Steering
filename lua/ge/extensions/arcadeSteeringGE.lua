@@ -26,7 +26,7 @@ local defaultConfig = {
     ["counterForce.useSteeredWheels"] = true,
     ["counterForce.response"]         = 0.2,
     ["counterForce.maxAngle"]         = 8.0,
-    ["counterForce.inputAuthority"]   = 0.6,
+    ["counterForce.inputAuthority"]   = 0.7,
     ["counterForce.damping"]          = 0.7,
 }
 

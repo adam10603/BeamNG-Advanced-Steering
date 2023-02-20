@@ -984,7 +984,7 @@ local function getSteeringLimit(allWheelData, velLen, effectiveAuthority, dt)
     local c                   = math.sqrt(a * a + b * b) -- // FIXME use steered wheel pos or something instead of entire wheelbase // FIXME remove fixme because its probably fine
     local beta                = math.asin(b / c)
     local desiredLimitRad     = (math.pi * 0.5) - beta -- Steering angle at which the wheels' normal would point to the center of the turning circle
-    local authorityCorrection = (1.0 - effectiveAuthority) * 0.4 * steeringCfg["counterForce.response"] * inverseLerpClamped(0, 0.5, steeringCfg["counterForce.maxAngle"], 0, 1) -- Depends on how the input authority is processed. Changing the countersteer force behavior will require a change to this.
+    local authorityCorrection = (1.0 - effectiveAuthority) * 0.6 * steeringCfg["counterForce.response"] * inverseLerpClamped(0, 0.5, steeringCfg["counterForce.maxAngle"], 0, 1) -- Depends on how the input authority is processed. Changing the countersteer force behavior will require a change to this.
     desiredLimitRad           = desiredLimitRad + math.rad(getLimitCorrection(allWheelData)) + math.rad(authorityCorrection) + math.rad(steeringCfg["steeringLimitOffset"])
 
     -- print(b)
