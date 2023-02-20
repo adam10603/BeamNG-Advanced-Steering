@@ -27,9 +27,15 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
             };
 
             scope.formatInput = (inputEm) => {
+                let originalInput = inputEm.value;
+                let alteredVal    = originalInput;
                 if (inputEm.parentNode.classList.contains("input-format-degree")) {
-                    inputEm.parentNode.setAttribute("altered-value", `${inputEm.value}°`);
+                    alteredVal = `${alteredVal}°`;
                 }
+                if (inputEm.parentNode.classList.contains("input-format-offset")) {
+                    if (parseFloat(originalInput) > 0) alteredVal = `+${alteredVal}`;
+                }
+                inputEm.parentNode.setAttribute("altered-value", alteredVal);
             };
 
             scope.updateGUIValues = (settings) => {

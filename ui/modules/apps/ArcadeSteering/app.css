@@ -113,12 +113,14 @@ input[type="number"] {
 .input-container, .formatted-input-container {
     position: relative;
     user-select: none;
+    caret-color: transparent;
 }
 
 .formatted-input-container[altered-value]:before {
     content: attr(altered-value);
     position: absolute;
     left: var(--input-padding-left);
+    pointer-events: none;
 }
 
 .formatted-input-container[altered-value] input {

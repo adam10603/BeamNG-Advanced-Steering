@@ -3,7 +3,7 @@
 The default settings should be fine for most people, so you can just enjoy the mod without changing anything.
 But if you want to fine tune the steering feel, you can do so in the included UI app. This page explains all the settings in the UI app.
 
-![UI App](https://i.imgur.com/9QktZO0.png)
+![UI App](https://i.imgur.com/QhVAyzl.png)
 
 # General
 
@@ -22,15 +22,23 @@ You can bring up the console with the <kbd>~</kbd> key.
 
 I suggest enabling force-scrolling with the <kbd>⤓</kbd> button in the top left of the console if you're using this.
 
-# Steering
-Settings related to regular steering input.
+# Steering input
+Settings related to steering input from the player.
+
+### Relative steering speed
+
+If enabled, the [Steering speed](#steering-speed) setting is applied to the steering wheel itself. This means that parts like quick ratio steering racks will change the rate of steering down at the wheels, and vehicles with more steering wheel rotation will have a slower steering feel as a result (like trucks or buses). The default input system also does this for added realism.
+
+If disabled, the [Steering speed](#steering-speed) setting is applied to the steered wheels on the ground instead of the steering wheel. This means that parts like quick ratio steering racks will NOT change the rate of steering down at the wheels, they will only make the steering wheel rotate faster or slower. This is less realistic but it provides a more consistent steering feel across different vehicles.
+
+___
 
 ### Steering speed
 > Range: `0.0` - `10.0`
 
 How fast the steering is.
 
-When using the ***Key (smooth)*** input filter, this setting is reduced internally to 75% of its value.
+When using the ***Key (smooth)*** input filter, this setting is reduced internally to 70% of its value.
 
 ![SteeringSpeed](https://i.imgur.com/oYO88Cq.gif)
 
@@ -39,21 +47,24 @@ ___
 ### Steering limit offset
 > Range: `-5.0` - `5.0` degrees
 
-Changes the steering angle cap. For example a value of `2.0` would let you steer 2° more than normal.
+Changes the steering angle cap for turning inward. For example a value of `2.0` would let you steer 2° more than normal.
 
 The default cap (`0.0`) is already very accurate with keeping the steered wheels near their peak grip in a turn, so I don't see a need to change this. I only left this setting here just in case someone runs into a weird edge case. You can ignore this basically.
 
 ___
 
-### Relative steering speed
+### Countersteer limit offset
+> Range: `0.0` - `10.0` degrees
 
-If enabled, the steering speed will be adjusted to each vehicle's max steering wheel rotation. This means that parts like quick ratio steering racks will change the effective steering speed at the wheels, and vehicles that have more steering wheel rotation will have slower steering as a result (like trucks or buses). The default input system also does this.
+Changes the steering angle cap for countersteering. This only applies to manual countersteer input, not the automatic countersteer assist.
 
-If disabled, all vehicles will have a similar-ish steering speed at the wheels. This means that parts like quick ratio steering racks will NOT change the effective steering speed at the wheels.
+This cap is relative to the angle of the slide. For example if the car is in a 20° slide, a value of `0.0` would let you countersteer up to 20° while a value of `5.0` would let you countersteer up to 25°.
+
+Higher values make countersteering more responsive and vice versa.
 
 ___
 
-# Countersteer force
+# Countersteer assist
 These settings affect how the car's natural countersteer tendency behaves. Manual countersteering is not affected by these.
 
 
@@ -108,7 +119,7 @@ Think of a lower setting like having a looser grip on the steering wheel and let
 
 The difference this setting makes depends on the [Response](#response) and [Max angle](#max-angle) settings. The stronger you make the car's countersteer force, the more difference you'll notice when you allow it to resist your input.
 
-When using the ***Key (smooth)*** input filter, this setting is reduced internally to 75% of its value.
+When using the ***Key (smooth)*** input filter, this setting is reduced internally to 70% of its value.
 
 In the GIF below, the car starts to gently oversteer after the turn begins. Low input authority allows the car to correct the slide to an extent despite the player fully turning inwards.
 
