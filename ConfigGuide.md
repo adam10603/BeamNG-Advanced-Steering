@@ -29,7 +29,7 @@ Settings related to steering input from the player.
 
 If enabled, the [Steering speed](#steering-speed) setting is applied to the steering wheel itself. This means that parts like quick ratio steering racks will change the rate of steering down at the wheels, and vehicles with more steering wheel rotation will have a slower steering feel as a result (like trucks or buses). The default input system also does this for added realism.
 
-If disabled, the [Steering speed](#steering-speed) setting is applied to the steered wheels on the ground instead of the steering wheel. This means that parts like quick ratio steering racks will NOT change the rate of steering down at the wheels, they will only make the steering wheel rotate faster or slower.
+If disabled, the [Steering speed](#steering-speed) setting is applied to the steered wheels on the ground instead of the steering wheel. This means that parts like quick ratio steering racks will NOT change the rate of steering down at the wheels, they will only make the steering wheel rotate faster or slower. This is less realistic but it provides a more consistent steering feel across different vehicles.
 
 ___
 
