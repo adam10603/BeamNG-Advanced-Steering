@@ -45,7 +45,7 @@ When using the ***Key (smooth)*** input filter, this setting is reduced internal
 ___
 
 ### Steering limit offset
-> Range: `-5.0` - `+5.0` degrees
+> Range: `-5.0` - `5.0` degrees
 
 Changes the steering angle cap for turning inward. For example a value of `2.0` would let you steer 2° more than normal.
 
@@ -54,7 +54,7 @@ The default cap (`0.0`) is already very accurate with keeping the steered wheels
 ___
 
 ### Countersteer limit offset
-> Range: `0.0` - `+10.0` degrees
+> Range: `0.0` - `10.0` degrees
 
 Changes the steering angle cap for countersteering. This only applies to manual countersteer input, not the automatic countersteer assist.
 
