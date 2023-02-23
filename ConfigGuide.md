@@ -27,9 +27,9 @@ Settings related to steering input from the player.
 
 ### Relative steering speed
 
-If enabled, the [Steering speed](#steering-speed) setting is applied to the steering wheel itself. This means that parts like quick ratio steering racks will change the rate of steering down at the wheels, and vehicles with more steering wheel rotation will have a slower steering feel as a result (like trucks or buses). The default input system also does this for added realism.
+If enabled, the [Steering speed](#steering-speed) setting is applied to the steering wheel itself. This means that different ratio steering racks will change the rate of steering down at the wheels, and vehicles with more steering wheel rotation will have a slower steering feel as a result (like trucks or buses). The default input system also does this for added realism.
 
-If disabled, the [Steering speed](#steering-speed) setting is applied to the steered wheels on the ground instead of the steering wheel. This means that parts like quick ratio steering racks will NOT change the rate of steering down at the wheels, they will only make the steering wheel rotate faster or slower. This is less realistic but it provides a more consistent steering feel across different vehicles.
+If disabled, the [Steering speed](#steering-speed) setting is applied to the steered wheels on the ground instead of the steering wheel. This means that different ratio steering racks will NOT change the rate of steering down at the wheels, they will only make the steering wheel rotate faster or slower. This is less realistic but it provides a more consistent steering feel across different vehicles.
 
 ___
 
@@ -49,14 +49,14 @@ ___
 
 Changes the steering angle cap for turning inward. For example a value of `2.0` would let you steer 2° more than normal.
 
-The default cap (`0.0`) is already very accurate with keeping the steered wheels near their peak grip in a turn, so I don't see a need to change this. I only left this setting here just in case someone runs into a weird edge case. You can ignore this basically.
+The default cap (`0.0`) is already very accurate with keeping the steered wheels near their peak grip in a turn, so I don't see a need to change this. I only left this setting here for experimentation or edge cases. You can ignore this basically.
 
 ___
 
 ### Countersteer limit offset
 > Range: `0.0` - `10.0` degrees
 
-Changes the steering angle cap for countersteering. This only applies to manual countersteer input, not the automatic countersteer assist.
+Changes the steering angle cap for countersteering. This only applies to manual countersteer input, not the automatic countersteer.
 
 This cap is relative to the angle of the slide. For example if the car is in a 20° slide, a value of `0.0` would let you countersteer up to 20° while a value of `5.0` would let you countersteer up to 25°.
 
@@ -81,7 +81,7 @@ ___
 ### Response
 > Range: `0.0` - `1.0`
 
-Adjusts how easily the car's natural countersteer force can reach it's maximum ([Max angle](#max-angle)). This does not affect manual countersteering.
+Adjusts how aggressively the car's own countersteer force ramps up (before it caps out at [Max angle](#max-angle)). This does not affect manual countersteering.
 
 Higher values will make the car feel tighter, causing its natural countersteer force to fight harder to go straight.
 
@@ -132,12 +132,12 @@ ___
 
 How much damping force to apply to the car's own countersteer force.
 
-Without damping, the car's countersteering might overshoot and oscillate left and right when trying to straighten out. Damping helps the countersteer force to settle down and prevents it from overcorrecting.
+Without damping, the car's countersteer force might overshoot and oscillate left and right when trying to straighten out. Damping helps it to settle down.
 
 This is most noticeable in high-grip cars when you stop giving steering input during a high-speed turn and let the car try to straighten out on its own.
 
 In general, the stronger you make the car's countersteer tendency with the [Response](#response) and [Max angle](#max-angle) settings, the more damping you'll need. You'll also need more damping if the [Use steered wheels](#use-steered-wheels) setting is enabled, as that's naturally less stable.
 
-I wouldn't recommend using more damping than necessary as too much can cause unwanted vibrations in some cars. If you notice the steering spazzing out sometimes (especially under braking), you might want to decrease damping.
+I wouldn't recommend using more damping than necessary as too much can cause unwanted vibrations in some cars. If you notice the steering unnaturally spazzing out sometimes, you might want to decrease damping.
 
 ![Damping](https://i.imgur.com/SdnhUcA.gif)
