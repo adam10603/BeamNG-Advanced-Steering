@@ -356,6 +356,7 @@ local maxTorqueSteer            = 1.0 -- Deg
 -- =================== State (things that need to be reset)
 
 local steeringSmoother          = SmoothTowards:new(3.5, 0.15, -1, 1, 0)
+local steeringSmootherAbs       = SmoothTowards:new(3.5, 0.15, -1, 1, 0)
 -- local counterSmoother           = SmoothTowards:new(3.5, 0.15, -1, 1, 0) -- For manual countersteer input
 local counterAssistSmoother     = SmoothTowards:new(7, 0.15, -1, 1, 0) -- Only for the assist
 local counterAssistSmoother2    = SmoothTowards:new(7, 0.15, -1, 1, 0) -- Only for the assist (inward)
@@ -414,6 +415,25 @@ local function debugBar(vehicleTransform, val, max, colorArr, slot)
         0.02,
         color(0, 0, 0)
     )
+end
+
+local function debugWheels(allWheelData)
+    for i,w in ipairs(allWheelData) do
+        local posOffset = w.transformWorld.upVec:cross(w.transformWorld.fwdVec) * 0.5 * -w.wheelDir
+        obj.debugDrawProxy:drawCylinder(
+            w.transformWorld.pos + posOffset,
+            w.transformWorld.pos + posOffset + w.transformWorld.fwdVec,
+            0.02,
+            color(255, 255, 0)
+        )
+
+        obj.debugDrawProxy:drawCylinder(
+            w.transformWorld.pos + posOffset,
+            w.transformWorld.pos + posOffset + w.velocityWorld:normalized(),
+            0.02,
+            color(0, 255, 255)
+        )
+    end
 end
 
 local function getHardSurfacesById()
@@ -568,7 +588,8 @@ local function getWheelData(wheelIndex, vehTransform, ignoreAirborne)
         tireVolume       = wheels.wheels[wheelIndex].tireVolume,
         tireSoftness     = wheels.wheels[wheelIndex].softnessCoef,
         isPropulsed      = wheels.wheels[wheelIndex].isPropulsed,
-        propulsionTorque = wheels.wheels[wheelIndex].propulsionTorque * wheels.wheels[wheelIndex].wheelDir
+        propulsionTorque = wheels.wheels[wheelIndex].propulsionTorque * wheels.wheels[wheelIndex].wheelDir,
+        wheelDir         = wheels.wheels[wheelIndex].wheelDir
         -- tireWidth        = wheels.wheels[wheelIndex].tireWidth
     }
 end
@@ -659,7 +680,7 @@ local function customPhysicsStep(dtPhys)
     if calibrationStage < 2 then
         calibrationDuration = calibrationDuration + dtPhys
 
-        if calibrationDuration > 2 then
+        if calibrationDuration > 2.5 then
             log("W", logTag, "Steering calibration was canceled because it took longer than expected. Try reloading the vehicle (Ctrl+R) on a flat surface!")
             calibrationStage = 3
             return
@@ -738,6 +759,7 @@ end
 
 local function reset()
     steeringSmoother:reset()
+    steeringSmootherAbs:reset()
     counterAssistSmoother:reset()
     counterAssistSmoother2:reset()
     isGroundedSpeedCap:reset()
@@ -915,7 +937,7 @@ end
 
 -- Gets the baseline steering speed multiplier based on the relative steering speed setting
 local function getBaseSteeringSpeedMult()
-    return steeringCfg["relativeSteeringSpeed"] and (580 / v.data.input.steeringWheelLock) or 1
+    return steeringCfg["relativeSteeringSpeed"] and (540 / v.data.input.steeringWheelLock) or 1
 end
 
 -- Calculates the final steering speed multiplier based on speed, input method, and settings
@@ -1089,7 +1111,7 @@ local function processInput(e, dt)
     -- ======================== Gathering measurements, assembling data
 
     local originalInput        = ival
-    local originalInputAbs     = math.abs(ival)
+    local originalInputAbs     = clamp(steeringSmootherAbs:getWithSpeedMult(math.abs(e.val), dt, steeringSpeedMult), e.minLimit, e.maxLimit) -- Using a smooth version of the absolute value instead of the absolute of the smooth version. Needs an additional smoother but works better this way.
     local vehicleTransform     = getVehicleTransform()
     local worldVel             = stablePhysicsData.vehVelocity:get() or vec3()
     local localVel             = vehicleTransform:vecToLocal(worldVel)
@@ -1220,6 +1242,8 @@ local function processInput(e, dt)
         -- gxSmootherTest:add(sensors.gx2 / obj:getGravity())
         -- print(string.format("Gx        = %8.3f", gxSmootherTest:get()))
         -- print(string.format("SPEED: %8.3f", localHVelKmh))
+
+        -- debugWheels(allWheelData)
     end
 
     -- obj.debugDrawProxy:drawSphere(0.2, vehicleTransform:pointToWorld(wheelsMidPoint), color(255, 0, 255, 255))
