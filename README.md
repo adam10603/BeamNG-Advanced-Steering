@@ -28,7 +28,7 @@ In case you want the zip version, you can get that from the [BeamNG website](htt
 
 ## Setup 🛠
 
-Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind(s) for **Steering**. Make sure the ***Filter*** is set correctly (or ***Automatic*** if unsure), and set the ***1:1 steering angle*** to 0 if you're using a controller. On a controller I'd personally decrease the **Linearity** setting to around 1.5 as well (the default is higher).
+Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind(s) for **Steering**. Make sure the ***Filter*** is set correctly (or ***Automatic*** if unsure), and set the ***1:1 steering angle*** to 0 if you're using a controller. For a controller I'd personally also decrease the **Linearity** setting to around 1.0 - 1.5 (the default is higher).
 
 The mod will not do anything if you use the ***Wheel (direct)*** filter, as it's only meant for keyboard and controller. But for steering input specifically, it does modify the behavior of the other filter types.
 
