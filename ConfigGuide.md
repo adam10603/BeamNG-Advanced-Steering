@@ -64,7 +64,7 @@ Higher values make countersteering more responsive and vice versa.
 
 ___
 
-# Countersteer assist
+# Countersteer tendency
 These settings affect how the car's natural countersteer tendency behaves. Manual countersteering is not affected by these.
 
 

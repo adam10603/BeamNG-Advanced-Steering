@@ -1,9 +1,9 @@
 # BeamNG.drive: Arcade Steering
-![Version](https://img.shields.io/badge/Version-2.4.1-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v27.2.0-green.svg)
+![Version](https://img.shields.io/badge/Version-2.5.0-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v28.0.0-green.svg)
 
 ## Intro 🖊️
 
-This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. It provides a steering system that's more aware of the vehicle's underlying physics and results in an improved steering feel that's more intuitive and fun.
+This is an extensive modification of BeamNG.drive's steering input system for controller and keyboard. It provides a steering system that's more aware of the vehicle's underlying physics and results in an improved steering feel that's more intuitive and fun. It's a useful mod for anyone without a steering wheel, regardless of skill level.
 
 BeamNG version 0.26+ has two options called ***Oversteer reduction assistant*** and ***Understeer reduction assistant*** which behave similarly to this mod (in fact, they were likely inspired by the first version of my mod). These options are an improvement over not having them at all (like in older versions of the game), however, the steering feel they provide still leaves room for improvement. This is where Arcade Steering comes in.
 
@@ -28,7 +28,7 @@ In case you want the zip version, you can get that from the [BeamNG website](htt
 
 ## Setup 🛠
 
-Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind(s) for **Steering**. Make sure the ***Filter*** is set correctly (or ***Automatic*** if unsure), and set the ***1:1 steering angle*** to 0 if you're using a controller. For a controller I'd personally also decrease the **Linearity** setting to around 1.0 - 1.5 (the default is higher).
+Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind(s) for **Steering**. Make sure the ***Filter*** is set correctly (or ***Automatic*** if unsure), and set the ***1:1 steering angle*** to 0 if you're using a controller. For a controller I'd personally also decrease the **Linearity** setting to somewhere between 1.0 - 2.0 (the default is higher).
 
 The mod will not do anything if you use the ***Wheel (direct)*** filter, as it's only meant for keyboard and controller. But for steering input specifically, it does modify the behavior of the other filter types.
 
