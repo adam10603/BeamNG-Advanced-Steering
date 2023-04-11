@@ -3,11 +3,11 @@
 The default settings should be fine for most people, so you can just enjoy the mod without changing anything.
 But if you want to fine tune the steering feel, you can do so in the included UI app. This page explains all the settings in the UI app.
 
-![UI App](https://i.imgur.com/QhVAyzl.png)
+![UI App](https://i.imgur.com/IRgihn0.png)
 
 # General
 
-### Enable Arcade Steering
+### Enable Advanced Steering
 
 Enables or disables the entire mod. When disabled, the stock input system is used. It's a good way to quickly compare the two systems.
 
@@ -29,7 +29,7 @@ Settings related to steering input from the player.
 
 If enabled, the [Steering speed](#steering-speed) setting is applied to the steering wheel itself. This means that different ratio steering racks will change the rate of steering down at the wheels, and vehicles with more steering wheel rotation will have a slower steering feel as a result (like trucks or buses). The default input system also does this for added realism.
 
-If disabled, the [Steering speed](#steering-speed) setting is applied to the steered wheels on the ground instead of the steering wheel. This means that different ratio steering racks will NOT change the rate of steering down at the wheels, they will only make the steering wheel rotate faster or slower. This is less realistic but it provides a more consistent steering feel across different vehicles.
+If disabled, the [Steering speed](#steering-speed) setting is applied to the steered wheels on the ground instead of the steering wheel. This means that different ratio steering racks will NOT change the rate of steering down at the wheels, they will only make the steering wheel rotate faster or slower. This is less realistic but it provides a much more consistent steering feel across different vehicles.
 
 ___
 
@@ -64,7 +64,13 @@ Higher values make countersteering more responsive and vice versa.
 
 ___
 
-# Countersteer assist
+### Photo mode
+
+This applies to keyboard input! When enabled, it turns off auto-centering when the car is stationary. This means you can leave the wheels turned with no input required. It's useful for taking screenshots for example.
+
+___
+
+# Countersteer tendency
 These settings affect how the car's natural countersteer tendency behaves. Manual countersteering is not affected by these.
 
 
@@ -72,7 +78,7 @@ These settings affect how the car's natural countersteer tendency behaves. Manua
 
 If enabled, the car's own countersteer force will be based on the forces at the steered wheels (usually the front wheels). This is more realistic, but can feel less stable at times.
 
-If disabled, forces will be measured at the rear wheels (regardless if they are steered). This is not realistic but it yields a more stable feel. If you disable this setting, I recommend decreasing [Response](#response) and [Damping](#damping) a bit, since this mode will inherently start countersteering a bit sooner and also won't overcorrect as much.
+If disabled, forces will be measured at the rear wheels (regardless if they are steered). This is not realistic but it yields a more stable feel. If you disable this setting, I recommend decreasing [Response](#response) and [Damping](#damping) slightly, since this mode will inherently start countersteering a bit sooner and also won't overcorrect as much.
 
 A side-effect of having this enabled is that you'll get an increased steering limit at low speeds (below 40km/h-ish) if you use an [Input authority](#input-authority) setting less than `1.0`. It's a minor detail, you can ignore it.
 
@@ -86,8 +92,6 @@ Adjusts how aggressively the car's own countersteer force ramps up (before it ca
 Higher values will make the car feel tighter, causing its natural countersteer force to fight harder to go straight.
 
 Lower values will make the car more loose, as the car's countersteer tendency won't be as aggressive.
-
-I recommend keeping this below `0.5` or so.
 
 When driving on off-road surfaces, this value is internally decreased to allow for a looser "rally-style" driving utilizing the car's claw grip.
 
@@ -136,7 +140,7 @@ Without damping, the car's countersteer force might overshoot and oscillate left
 
 This is most noticeable in high-grip cars when you stop giving steering input during a high-speed turn and let the car try to straighten out on its own.
 
-In general, the stronger you make the car's countersteer tendency with the [Response](#response) and [Max angle](#max-angle) settings, the more damping you'll need. You'll also need more damping if the [Use steered wheels](#use-steered-wheels) setting is enabled, as that's naturally less stable.
+In general, the stronger you make the car's countersteer tendency with the [Response](#response) and [Max angle](#max-angle) settings, the more damping you'll need. You'll also need more damping if the [Use steered wheels](#use-steered-wheels) setting is enabled, as that's naturally a bit less stable.
 
 I wouldn't recommend using more damping than necessary as too much can cause unwanted vibrations in some cars. If you notice the steering unnaturally spazzing out sometimes, you might want to decrease damping.
 
