@@ -1,6 +1,6 @@
-angular.module("beamng.apps").directive("arcadeSteering", [() => {
+angular.module("beamng.apps").directive("advancedSteeringConfig", [() => {
     return {
-        templateUrl: "/ui/modules/apps/arcadeSteering/app.html",
+        templateUrl: "/ui/modules/apps/advancedSteeringConfig/app.html",
         replace: true,
         restrict: "EA",
         // require: "^bngApp",
@@ -62,20 +62,20 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
 
             scope.applySettings = () => {
                 let settings = scope.readSettingsFromGUI();
-                bngApi.engineLua(`arcadeSteeringGE.applySettings('${JSON.stringify(settings)}')`);
+                bngApi.engineLua(`advancedSteeringGE.applySettings('${JSON.stringify(settings)}')`);
             };
 
             scope.saveSettings = () => {
                 let settings = scope.readSettingsFromGUI();
-                bngApi.engineLua(`arcadeSteeringGE.saveSettings('${JSON.stringify(settings)}')`);
+                bngApi.engineLua(`advancedSteeringGE.saveSettings('${JSON.stringify(settings)}')`);
             };
 
             scope.loadDefaultSettings = () => {
-                bngApi.engineLua("arcadeSteeringGE.displayDefaultSettings()");
+                bngApi.engineLua("advancedSteeringGE.displayDefaultSettings()");
             };
 
             scope.loadCurrentSettings = () => {
-                bngApi.engineLua("arcadeSteeringGE.displayCurrentSettings()");
+                bngApi.engineLua("advancedSteeringGE.displayCurrentSettings()");
             };
 
             scope.showFeedbackOnButton = (button, successText, success) => {
@@ -121,15 +121,15 @@ angular.module("beamng.apps").directive("arcadeSteering", [() => {
                 scope.loadCurrentSettings();
             });
 
-            scope.$on("arcadeSteeringSettingsApplied", (evt, success) => {
+            scope.$on("advancedSteeringSettingsApplied", (evt, success) => {
                 scope.showFeedbackOnButton(scope.buttons.applyButton, "Applied!", success);
             });
 
-            scope.$on("arcadeSteeringSettingsSaved", (evt, success) => {
+            scope.$on("advancedSteeringSettingsSaved", (evt, success) => {
                 scope.showFeedbackOnButton(scope.buttons.saveButton, "Saved!", success);
             });
 
-            scope.$on("arcadeSteeringSetDisplayedSettings", (evt, data) => {
+            scope.$on("advancedSteeringSetDisplayedSettings", (evt, data) => {
                 if (data["isDefault"]) scope.showFeedbackOnButton(scope.buttons.defaultButton, "Loaded!", true);
                 else scope.currentSettings = data["settings"];
                 scope.updateGUIValues(data["settings"]);

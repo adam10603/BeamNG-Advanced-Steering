@@ -1,4 +1,6 @@
 # BeamNG.drive: Advanced Steering
+*Formerly known as Arcade Steering*
+
 ![Version](https://img.shields.io/badge/Version-2.5.0-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v28.0.0-green.svg)
 
 ## Intro 🖊️

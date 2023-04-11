@@ -1,2 +1,0 @@
-load("arcadeSteeringGE")
-registerCoreModule("arcadeSteeringGE")
