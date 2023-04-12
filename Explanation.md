@@ -8,7 +8,7 @@ First we'll establish how the steering works in a real car, then how that transl
 
 ## 📈 Steering amount
 
-Because of how tires work (both in real life and realistic enough games), there's always an optimal amount of steering (or rather an optimal slip angle) that results in the highest grip for the front wheels. Steering either less or more than this would reduce your front grip.
+Because of how tires work (both in real life and realistic enough games), there's always an optimal amount of steering (or rather an optimal slip angle) that results in the highest grip for the front wheels. Steering either less or more than this would reduce your front grip. Note that this doesn't apply to soft surfaces like dirt, but we are talking about hard surfaces here.
 
 This is the reason you don't just go full-lock steering at high speed, because that's beyond the optimal steering angle, and therefore the car would understeer. Sounds a bit counterintuitive, but basically steering too much can make you turn less.
 
@@ -50,7 +50,7 @@ Why couldn't people without a wheel also have a good driving experience? This is
 
 #### 🔵 *"I'm a good driver, I don't need assists"*
 
-This kind of input processing is not just for beginners. It doesn't really add any extra benefit that FFB steering wheels wouldn't have, so it's not some unfair advantage or artificial driver-aid. It's just about making keyboards / controllers better suited for steering a car, which by default they aren't the most optimal for. Without this, car control would be much harder compared to FFB steering wheels, and for no good reason. I guess you can drive without it if you like the challenge, but personally I'd be happy if I'm allowed similar levels of car control to FFB wheel users despite not having one.
+This kind of input processing is not just for beginners. I'd understand this point with things like assisted braking, but this is different. It's not about removing the need for driving skills, but rather about making keyboards / controllers better suited for steering a car, which by default they could only do a limited job at. Without this, car control would be much harder compared to FFB steering wheels, and for no good reason. I guess you can drive without it if you like the added challenge, but personally I'd be happy if I'm allowed similar levels of car control to FFB wheel users despite not having one.
 
 #### 🔵 *"I want realism, so I won't use any assists"*
 
