@@ -8,7 +8,7 @@ First we'll establish how the steering works in a real car, then how that transl
 
 ## 📈 Steering amount
 
-Because of how tires work (both in real life and realistic enough games), there's always an optimal amount of steering (or rather an optimal slip angle) that results in the highest grip for the front wheels. Steering either less or more than this would reduce your front grip.
+Because of how tires work (both in real life and realistic enough games), there's always an optimal amount of steering (or rather an optimal slip angle) that results in the highest grip for the front wheels. Steering either less or more than this would reduce your front grip. Note that this doesn't apply to soft surfaces like dirt, but we are talking about hard surfaces here.
 
 This is the reason you don't just go full-lock steering at high speed, because that's beyond the optimal steering angle, and therefore the car would understeer. Sounds a bit counterintuitive, but basically steering too much can make you turn less.
 
