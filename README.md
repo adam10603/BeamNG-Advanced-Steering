@@ -28,7 +28,7 @@ The principles implemented by this mod are a common way of processing steering i
 
 You can easily get the mod from the in-game mod repository. Just search "Advanced Steering" and subscribe to it!
 
-In case you want the zip version, you can get that from the [BeamNG website](https://www.beamng.com/resources/arcade-steering.24284/) or the [Releases](https://github.com/adam10603/BeamNG-Advanced-Steering/releases) section.
+In case you want the zip version, you can get that from the [BeamNG website](https://www.beamng.com/resources/advanced-steering.24284/) or the [Releases](https://github.com/adam10603/BeamNG-Advanced-Steering/releases) section.
 
 ## 🛠 Setup
 
