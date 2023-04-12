@@ -71,7 +71,7 @@ This applies to keyboard input! When enabled, it turns off auto-centering when t
 ___
 
 # Countersteer tendency
-These settings affect how the car's natural countersteer tendency behaves. Manual countersteering is not affected by these.
+These settings affect how the car's natural self-steer tendency behaves. Manual countersteering is not affected by these.
 
 
 ### Use steered wheels
