@@ -1,11 +1,11 @@
-<div class="bngApp arcade-steering">
-    <link href="/ui/modules/apps/arcadeSteering/app.css" rel="stylesheet">
+<div class="bngApp advanced-steering-config">
+    <link href="/ui/modules/apps/advancedSteeringConfig/app.css" rel="stylesheet">
     <div class="settings-container">
         <dl>
             <dt><h4>General</h4></dt>
             <dd>
                 <div class="input-line">
-                    <label>Enable Arcade Steering</label>
+                    <label>Enable Advanced Steering</label>
                     <div class="input-container">
                         <input id="cfg-enableCustomSteering" value="0" type="checkbox"/>
                     </div>
@@ -46,8 +46,14 @@
                         <input id="cfg-countersteerLimitOffset" value="0" type="number" min="0" max="10" step="0.1"/>
                     </div>
                 </div>
+                <div class="input-line">
+                    <label>Photo mode</label>
+                    <div class="input-container">
+                        <input id="cfg-photoMode" value="0" type="checkbox"/>
+                    </div>
+                </div>
             </dd>
-            <dt><h4>Countersteer assist</h4></dt>
+            <dt><h4>Countersteer tendency</h4></dt>
             <dd>
                 <div class="input-line">
                     <label>Use steered wheels</label>

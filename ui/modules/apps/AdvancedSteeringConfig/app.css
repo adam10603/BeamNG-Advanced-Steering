@@ -1,4 +1,4 @@
-.arcade-steering {
+.advanced-steering-config {
     --footer-height: 40px;
     --input-padding-left: 5px;
     --ui-orange-color: #ff6600;
@@ -112,7 +112,7 @@ input[type="number"] {
 
 .input-container, .formatted-input-container {
     position: relative;
-    user-select: none;
+    user-select: none; /* doesnt work */
     caret-color: transparent;
 }
 
@@ -121,9 +121,10 @@ input[type="number"] {
     position: absolute;
     left: var(--input-padding-left);
     pointer-events: none;
+    z-index: 2;
 }
 
 .formatted-input-container[altered-value] input {
-    user-select: none;
+    user-select: none; /* doesnt work */
     color: rgba(0, 0, 0, 0);
 }

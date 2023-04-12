@@ -1,13 +1,13 @@
 {
-    "name": "Arcade Steering Config",
+    "name": "Advanced Steering Config",
     "author": "Adam",
-    "version": "2.4.1",
-    "description": "Settings for the Arcade Steering mod",
-    "directive": "arcadeSteering",
+    "version": "2.5.0",
+    "description": "Settings for the Advanced Steering mod",
+    "directive": "advancedSteeringConfig",
     "types": [
         "ui.apps.categories.vehicle_control"
     ],
-    "domElement": "<arcade-steering></arcade-steering>",
+    "domElement": "<advanced-steering-config></advanced-steering-config>",
     "css": {
         "top": "200px",
         "left": "200px",
