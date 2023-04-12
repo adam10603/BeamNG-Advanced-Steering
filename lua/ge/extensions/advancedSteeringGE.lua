@@ -148,8 +148,6 @@ M.displayDefaultSettings = displayDefaultSettings
 M.displayCurrentSettings = displayCurrentSettings
 M.applySettings          = applySettings
 M.saveSettings           = saveSettings
--- M.onVehicleSpawned       = function()
--- end
 
 local foundLegacyVersion = false
 
@@ -158,8 +156,11 @@ M.onVehicleSpawned = function ()
 
     -- Preparing for conflicts with the pre-rename version, just in case
     if foundLegacyVersion or arcadeSteeringGE then
+        if arcadeSteeringGE and arcadeSteeringGE.onVehicleSpawned then
+            arcadeSteeringGE.onVehicleSpawned = function() end
+        end
         applyLegacySettingsToVehicles({["enableCustomSteering"] = false})
-        guihooks.message("Please remove \"Arcade Steering\" from your mods folder and restart the game! \"Arcade Steering\" has been renamed to \"Advanced Steering\", but your game has both versions installed.", 30, logTag, "warning")
+        guihooks.message("Please remove \"Arcade Steering\" from your mods folder (if present) and restart the game! \"Arcade Steering\" has been renamed to \"Advanced Steering\", but your game currently has both versions loaded.", 30, logTag, "warning")
     end
 
     displayCurrentSettings()
