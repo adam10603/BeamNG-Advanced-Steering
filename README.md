@@ -3,6 +3,8 @@
 
 ![Version](https://img.shields.io/badge/Version-2.5.0-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v28.0.0-green.svg)
 
+![Thumbnail](https://i.imgur.com/yeQaquE.png)
+
 ## 🖊️ Intro
 
 This mod is an overhaul of BeamNG.drive's steering input system for controller and keyboard. It provides a steering system that's more aware of the vehicle's underlying physics and results in an improved steering feel that's more intuitive and closer to how real cars behave. It's a useful mod for anyone without a steering wheel, regardless of skill level.
