@@ -7,7 +7,7 @@
 
 ## 🖊️ Intro
 
-This mod is an overhaul of BeamNG.drive's steering input system for controller and keyboard. It provides a steering system that's more aware of the vehicle's underlying physics and results in an improved steering feel that's more intuitive and closer to how real cars behave. It's a useful mod for anyone without a steering wheel, regardless of skill level.
+This mod is an overhaul of BeamNG.drive's steering input system for controller and keyboard. It provides a steering system that's more aware of the vehicle's underlying physics and results in an improved steering feel that's more intuitive and closer to how real cars behave. It's a useful mod for anyone without a steering wheel, regardless of skill level. It also includes customizable settings, letting people adjust the steering feel to their liking.
 
 BeamNG version 0.26+ has two options called ***Oversteer reduction assistant*** and ***Understeer reduction assistant*** which behave similarly to this mod. These options are an improvement over not having them at all (like in older versions of the game), however, the steering feel they provide still leaves room for improvement. This is where Advanced Steering comes in.
 
@@ -32,17 +32,17 @@ In case you want the zip version, you can get that from the [BeamNG website](htt
 
 ## 🛠 Setup
 
-Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind(s) for **Steering**. Make sure the ***Filter*** is set correctly (or ***Automatic*** if unsure), and set the ***1:1 steering angle*** to 0 if you're using a controller. For a controller I'd also decrease the **Linearity** setting to somewhere between 1.0 - 2.0 as well (the default is higher).
+Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind(s) for ***Steering***. Make sure the ***Filter*** is set correctly (or ***Automatic*** if unsure), and set the ***1:1 steering angle*** to 0 if you're using a controller. For a controller I'd also decrease the ***Linearity*** setting to somewhere between 1.0 - 2.0 as well (the default is higher), depending on preference.
 
 The mod will not do anything if you use the ***Wheel (direct)*** filter, as it's only meant for keyboard and controller. But for steering input specifically, it does modify the behavior of the other filter types.
 
 The ***Key (smooth)*** filter will lower the [Steering speed](ConfigGuide.md#steering-speed) and [Input authority](ConfigGuide.md#input-authority) settings to 70% of their original value when you drive. This gives a smoother feel that's easier to control on keyboard. The ***Key (fast)*** and ***Gamepad*** filters are identical, and both use the config values as-is.
 
-Any steering-related option in the game such as ***Understeer reduction assistant***, ***Oversteer reduction assistant***, ***Slower steering at high speed*** or ***Limit steering at high speed*** will not work as long as you're driving with this mod enabled. This is because the mod completely bypasses the default steering system and uses its own logic for everything.
+Any steering-related option in the game such as ***Understeer reduction assistant***, ***Oversteer reduction assistant***, ***Slower steering at high speed*** or ***Limit steering at high speed*** will not work as long as you're driving with this mod enabled. This is because the mod bypasses the default steering system and uses its own logic for everything.
 
 ## 🎮 Usage
 
-When you first spawn a vehicle, an automatic steering calibration takes place. You won't be able to drive until it's over, but it only lasts about 1 second.
+When you first spawn a vehicle, a quick steering calibration will take place. You won't be able to drive until it's over, but it only lasts about 1 second.
 
 That's pretty much it. Keep driving and you should notice a change in steering feel, and that cars feel more well-behaved and predictable.
 
@@ -52,4 +52,4 @@ The default settings will work just fine for most people, but you can use the in
 
 Go to ***UI Apps*** in the top menu in-game, click ***Add app*** and look for ***Advanced Steering Config***. This widget will let you tweak the settings on the fly.
 
-Click the link above for a full breakdown of each setting in the app.
+Click the link above for a full breakdown of every setting.
