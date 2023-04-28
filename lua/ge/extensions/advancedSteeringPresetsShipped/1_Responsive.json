@@ -1,0 +1,15 @@
+{
+    "_version": 260,
+    "counterForce.damping": 0.3,
+    "counterForce.maxAngle": 5,
+    "counterForce.response": 0.25,
+    "counterForce.useSteeredWheels": true,
+    "countersteerLimitOffset": 6,
+    "enableCustomSteering": true,
+    "inputAuthority": 1.0,
+    "logData": false,
+    "photoMode": false,
+    "relativeSteeringSpeed": true,
+    "steeringLimitOffset": 0,
+    "steeringSpeed": 1.6
+}

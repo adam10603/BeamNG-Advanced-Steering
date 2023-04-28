@@ -1,7 +1,10 @@
 .advanced-steering-config {
-    --footer-height: 40px;
+    --footer-height: 42px;
     --input-padding-left: 5px;
     --ui-orange-color: #ff6600;
+    --dropdown-width: 180px;
+    --button-height: 1.75em;
+    /* --unsaved-color: #87dbff; */
 
     background-color: rgba(0, 0, 0, 0.6);
 
@@ -34,8 +37,8 @@
 }
 
 .settings-container dt h4 {
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-top: 14px;
+    margin-bottom: 14px;
 }
 
 .settings-container dd {
@@ -51,6 +54,14 @@
     justify-content: space-between;
 }
 
+.sub-line {
+    height: 1.25em;
+    display: flex;
+    align-items: right;
+    margin-bottom: 5px;
+    justify-content: flex-end;
+}
+
 input[type="checkbox"] {
     width: 1.25em;
     height: 1.25em;
@@ -63,6 +74,26 @@ input[type="number"] {
     width: 4.2em;
     padding-left: var(--input-padding-left);
     margin-right: 2px;
+}
+
+select {
+    background-color: black;
+    color: white;
+    border: 0px none;
+    /* height: 1.7em; */
+    width: var(--dropdown-width);
+}
+
+button {
+    color: white;
+    height: var(--button-height);
+    background-color: rgb(48, 48, 48);
+    border: none;
+    line-height: 0; /* Vertically centers text */
+}
+
+button:hover {
+    background-color: rgb(64, 64, 64);
 }
 
 /* .input-line input[type="checkbox"]:checked {
@@ -90,15 +121,19 @@ input[type="number"] {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 
 .footer-buttons button {
-    color: white;
-    background-color: rgb(48, 48, 48);
-    border: none;
-    width: 102px;
-    height: 30px;
-    line-height: 0; /* Vertically centers text */
+    width: 100%; /* Will get reduced anyway */
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.preset-buttons button {
+    margin-left: 8px;
+    width: calc((var(--dropdown-width) - 8px) * 0.5);
 }
 
 .footer-buttons button span {
@@ -106,25 +141,36 @@ input[type="number"] {
     transition: color 0.25s;
 }
 
-.footer-buttons button:hover {
-    background-color: rgb(64, 64, 64);
+.unsaved-indicator {
+    position: absolute;
+    left: -1em;
+    color: var(--ui-orange-color);
+    font-weight: bold;
 }
 
-.input-container, .formatted-input-container {
+.input-container, .dropdown-container, .checkbox-container, .formatted-input-container {
     position: relative;
-    user-select: none; /* doesnt work */
+    /* user-select: none; */
     caret-color: transparent;
+}
+
+.dropdown-container {
+    align-self: baseline;
+    z-index: 3;
+}
+
+.dropdown-container option:hover {
+    background-color: rgb(64, 64, 64);
 }
 
 .formatted-input-container[altered-value]:before {
     content: attr(altered-value);
     position: absolute;
     left: var(--input-padding-left);
-    pointer-events: none;
+    /* pointer-events: none; */
     z-index: 2;
 }
 
-.formatted-input-container[altered-value] input {
-    user-select: none; /* doesnt work */
+.formatted-input-container input {
     color: rgba(0, 0, 0, 0);
 }
