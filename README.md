@@ -1,7 +1,7 @@
 # BeamNG.drive: Advanced Steering
 *Formerly known as Arcade Steering*
 
-![Version](https://img.shields.io/badge/Version-2.5.0-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-v28.0.0-green.svg)
+![Version](https://img.shields.io/badge/Version-2.6.0-blue.svg) ![Compatibility](https://img.shields.io/badge/Game_compatibility-28.1.0-green.svg)
 
 ![Thumbnail](https://i.imgur.com/yeQaquE.png)
 
@@ -32,13 +32,13 @@ In case you want the zip version, you can get that from the [BeamNG website](htt
 
 ## 🛠 Setup
 
-Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind(s) for ***Steering***. Make sure the ***Filter*** is set correctly (or ***Automatic*** if unsure), and set the ***1:1 steering angle*** to 0 if you're using a controller. For a controller I'd also decrease the ***Linearity*** setting to somewhere between 1.0 - 2.0 as well (the default is higher), depending on preference.
+Go to ***Options*** ➡ ***Controls*** ➡ ***Bindings*** ➡ ***Vehicle***, and click on the bind(s) for ***Steering***. Make sure the ***Filter*** is set correctly (or just ***Automatic***), and set the ***1:1 steering angle*** to 0 for controller. For a controller I'd also decrease ***Linearity*** to somewhere between 1.0 - 2.0 as well (the default is higher).
 
 The mod will not do anything if you use the ***Wheel (direct)*** filter, as it's only meant for keyboard and controller. But for steering input specifically, it does modify the behavior of the other filter types.
 
 The ***Key (smooth)*** filter will lower the [Steering speed](ConfigGuide.md#steering-speed) and [Input authority](ConfigGuide.md#input-authority) settings to 70% of their original value when you drive. This gives a smoother feel that's easier to control on keyboard. The ***Key (fast)*** and ***Gamepad*** filters are identical, and both use the config values as-is.
 
-Any steering-related option in the game such as ***Understeer reduction assistant***, ***Oversteer reduction assistant***, ***Slower steering at high speed*** or ***Limit steering at high speed*** will not work as long as you're driving with this mod enabled. This is because the mod bypasses the default steering system and uses its own logic for everything.
+Any steering-related option in the game such as ***Understeer reduction assistant***, ***Oversteer reduction assistant***, ***Slower steering at high speed*** or ***Limit steering at high speed*** will not work as long as you're driving with this mod enabled. This is because the mod bypasses the default input system and uses its own logic for everything.
 
 ## 🎮 Usage
 

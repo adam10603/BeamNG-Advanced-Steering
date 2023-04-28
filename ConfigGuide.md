@@ -3,7 +3,7 @@
 The default settings should be fine for most people, so you can just enjoy the mod without changing anything.
 But if you want to fine tune the steering feel, you can do so in the included UI app. This page explains all the settings in the UI app.
 
-![UI App](https://i.imgur.com/IRgihn0.png)
+![UI App](https://i.imgur.com/vU9Qdul.png)
 
 # General
 
@@ -22,14 +22,37 @@ You can bring up the console with the <kbd>~</kbd> key.
 
 I suggest enabling force-scrolling with the <kbd>⤓</kbd> button in the top left of the console if you're using this.
 
+### Preset
+
+Presets allow you to store your settings and recall them later.
+
+Presets are stored separately from your regular saved settings. All they do is store the values in the UI app as a preset file, or load the values from a preset back into the UI app.
+
+The <kbd>Load</kbd> button will copy the values from the selected preset into the UI app. At this point the values are neither applied or saved as the active settings, so you still have to use the <kbd>✅ Apply</kbd> and <kbd>💾 Save</kbd> buttons for that.
+
+The <kbd>Store</kbd> button will write the values from the UI app to the selected preset. Factory presets are read-only (shown by a 🔒 icon) so you can't save over those. Note that the <kbd>Store</kbd> button is not the same as the <kbd>💾 Save</kbd> button. The <kbd>💾 Save</kbd> button saves to the "active" slot which is what's actually applied to newly spawned cars, whereas the <kbd>Store</kbd> button only writes to a preset file.
+
+The factory presets are as follows:
+
+ - **Default**
+   - A balanced preset that should work fine for most driving styles without being too obtrusive. It's somewhere in-between the Responsive and Stable presets.
+ - **Responsive**
+   - A bit more "direct" feeling than the Default preset and provides less assistance overall.
+ - **Stable**
+   - A higher level of assistance, aimed at keeping the car more stable. Could feel a bit too restrictive to some.
+ - **Full drift assist**
+   - The most "arcade" preset, aimed at fully assisted drifting (just by holding gas). Works best with the drift configurations of built-in cars. It makes drifting unrealistically easy, but some people have asked for this, so here it is. To fine-tune how it works, you can decrease the [Response](#response) setting if the car straightens out too easily, or increase it if it spins out too easily.
+
+Besides the read-only factory presets, there are 5 custom slots to store your own settings in. Unfortunately I can't add the ability to type in unique names for these, so they are just called ***Custom 1*** through ***Custom 5***.
+
 # Steering input
 Settings related to steering input from the player.
 
 ### Relative steering speed
 
-If enabled, the [Steering speed](#steering-speed) setting is applied to the steering wheel itself. This means that different ratio steering racks will change the rate of steering down at the wheels, and vehicles with more steering wheel rotation will have a slower steering feel as a result (like trucks or buses). The default input system also does this for added realism.
+If enabled, the [Steering speed](#steering-speed) setting is applied to the steering wheel itself. This means that different ratio steering racks will change how the car responds to steering input, and vehicles with more steering wheel rotation will have a slower steering feel as a result (like trucks or buses). The default input system also does this for added realism.
 
-If disabled, the [Steering speed](#steering-speed) setting is applied to the steered wheels on the ground instead of the steering wheel. This means that different ratio steering racks will NOT change the rate of steering down at the wheels, they will only make the steering wheel rotate faster or slower. This is less realistic but it provides a much more consistent steering response across different vehicles.
+If disabled, the [Steering speed](#steering-speed) setting is applied to the steered wheels on the ground instead of the steering wheel. This means that different ratio steering racks will NOT change how the car responds to steering input, they will only make the steering wheel rotate faster or slower. This is less realistic but it provides a much more consistent steering response across different vehicles.
 
 Personally I prefer this disabled, but I left it enabled in the deafult config to make different steering ratios have a more realistic effect.
 
@@ -46,12 +69,33 @@ When using the ***Key (smooth)*** input filter, this setting is reduced internal
 
 ___
 
+### Input authority
+> Range: `0.0` - `1.0`
+
+It determines how much your steering input can overrule the car's self-steer force when you turn inwards while the car is oversteering.
+
+A lower value will allow the car to resist your input more if you're trying to turn inwards while the car oversteers. A higher value will give you more direct control, but it makes oversteering easier.
+
+Think of a lower setting like having a looser grip on the steering wheel and letting it pull back if it wants to. A higher setting is more like holding the steering wheel firmly at a certain position.
+
+The difference this setting makes depends on the [Response](#response) and [Max angle](#max-angle) settings. The stronger you make the car's self-steer force, the more difference you'll notice when you allow it to resist your input.
+
+When using the ***Key (smooth)*** input filter, this setting is reduced internally to 70% of its value.
+
+In the GIF below, the car starts to gently oversteer after the turn begins. Low input authority allows the car to correct the slide to an extent despite the player fully turning inwards.
+
+![Input authority](https://i.imgur.com/bQANw6m.gif)
+
+___
+
 ### Steering limit offset
 > Range: `-5.0` - `5.0` degrees
 
 Changes the steering angle cap for turning inward. For example a value of `2.0` would let you steer 2° more than normal.
 
-The default cap (`0.0`) is already pretty accurate with keeping the steered wheels near their peak grip in a turn, so I'd recommend sticking to it. I only left this setting in for experimentation or edge cases. You can ignore this basically.
+This cap is relative to the ideal steering amount that's calculated based on speed, tire grip, and a few other factors.
+
+The default cap (`0.0`) is already pretty accurate with keeping the steered wheels near their peak grip in a turn, so I dont't recommend changing it. I only left this setting in for experimentation or edge cases. You can ignore this basically.
 
 ___
 
@@ -113,25 +157,6 @@ When driving on off-road surfaces, this value is internally decreased to allow f
 Increasing this value might require [Damping](#damping) to be increased as well.
 
 ![Max angle](https://i.imgur.com/zxtFXWu.gif)
-
-___
-
-### Input authority
-> Range: `0.0` - `1.0`
-
-It determines how much your steering input can overrule the car's self-steer force when you turn inwards while the car is oversteering.
-
-A lower value will allow the car to resist your input more if you're trying to turn inwards while the car oversteers. A higher value will give you more direct control, but it makes oversteering easier.
-
-Think of a lower setting like having a looser grip on the steering wheel and letting it pull back if it wants to. A higher setting is more like holding the steering wheel firmly at a certain position.
-
-The difference this setting makes depends on the [Response](#response) and [Max angle](#max-angle) settings. The stronger you make the car's self-steer force, the more difference you'll notice when you allow it to resist your input.
-
-When using the ***Key (smooth)*** input filter, this setting is reduced internally to 70% of its value.
-
-In the GIF below, the car starts to gently oversteer after the turn begins. Low input authority allows the car to correct the slide to an extent despite the player fully turning inwards.
-
-![Input authority](https://i.imgur.com/bQANw6m.gif)
 
 ___
 
