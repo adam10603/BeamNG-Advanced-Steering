@@ -48,7 +48,7 @@ local function clamp01(v)
 end
 
 local function round(x)
-    return math.floor(x + 0.5)
+    return ((x < 0) and -1 or 1) * math.floor(math.abs(x) + 0.5)
 end
 
 -- These functions are responsible for migrating saved configs from older versions to be compatible with the current version
