@@ -1,72 +1,72 @@
 {
     "attachments": [
         {
-            "data_filename": "995345.png",
-            "original_filename": "CGhkVZe.png",
-            "thumb_filename": "thumbs\/995345.jpg"
+            "data_filename": "1010150.png",
+            "original_filename": "bannersmall.png",
+            "thumb_filename": "thumbs\/1010150.jpg"
         },
         {
-            "data_filename": "995346.png",
-            "original_filename": "QhVAyzl.png",
-            "thumb_filename": "thumbs\/995346.jpg"
+            "data_filename": "1010196.png",
+            "original_filename": "githubapp.png",
+            "thumb_filename": "thumbs\/1010196.jpg"
         }
     ],
     "resource_id": 24284,
-    "current_version_id": 44748,
+    "current_version_id": 44835,
     "download_count": 0,
-    "resource_version_id": 44835,
-    "version_string": "2.4.1",
-    "last_update": 1676882406,
-    "rating_avg": 4.875,
+    "resource_version_id": 45763,
+    "version_string": "2.5.0",
+    "last_update": 1677227812,
+    "rating_avg": 4.88889,
     "rating_count": 0,
     "rating_sum": 0,
     "resource_category_id": 7,
     "resource_date": 1667383346,
-    "review_count": 17,
+    "review_count": 19,
     "tag_line": "An overhaul of the steering input system for controller and keyboard.",
-    "update_count": 7,
-    "path": "MPRB2QXY3\/44748\/",
-    "filename": "arcadeSteering.zip",
-    "title": "Arcade Steering",
+    "update_count": 8,
+    "path": "MPRB2QXY3\/44835\/",
+    "filename": "advancedSteering.zip",
+    "title": "Advanced Steering",
     "user_id": 474788,
     "username": "lmaoxd",
     "tagid": "MPRB2QXY3",
-    "message": "[B][I]\nThis is a complete overhaul of BeamNG's steering input system for controller and keyboard players.[\/I][\/B]\n\n[CENTER][ATTACH]995345[\/ATTACH] [\/CENTER]\n\nArcade Steering aims to give vehicles a more intuitive steering feel that makes driving more predictable and fun. It's suited for all kinds of driving including track racing, rallying, drifting etc.\n\nThe main features include:\n[LIST]\n[*]Accurate steering limit to utilize the steered wheels' peak grip\n[LIST]\n[*]This is similar to the [I]Understeer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]Natural countersteer tendency, simulating the effects of the car's caster angle\n[LIST]\n[*]This is similar to the [I]Oversteer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]More refined steering feel compared to the stock assists\n[*]Highly customizable settings\n[\/LIST]\nDespite the \"arcade\" name this isn't an unrealistic or artificial driver-aid. The mod mostly mimics how the steering behaves on real cars, and makes controller and keyboard driving more on par with using a force-feedback steering wheel.\n\nThe mod includes a UI app called [I]Arcade Steering Settings[\/I] which lets you fine tune the steering feel to your liking, although the default settings should be fine for most people.\n\n[CENTER][ATTACH]995346[\/ATTACH] [\/CENTER]\n\nFor more info you can visit the project's [URL='https:\/\/github.com\/adam10603\/BeamNG-Arcade-Steering'][B][U]Github page[\/U][\/B][\/URL] which also has a [URL='https:\/\/github.com\/adam10603\/BeamNG-Arcade-Steering\/blob\/main\/ConfigGuide.md'][B][U]configuration guide[\/U][\/B][\/URL] explaining all the settings, or you can visit the mod's [URL='https:\/\/www.beamng.com\/threads\/arcade-steering-mod.85494\/'][B][U]forum thread[\/U][\/B][\/URL] for discussions.\n\nHave fun!",
+    "message": "[I]Formally known as Arcade Steering.[\/I]\n[B][I]\nThis mod is an overhaul of BeamNG's steering input system for controller and keyboard players.[\/I][\/B]\n\n[CENTER][ATTACH]1010150[\/ATTACH][\/CENTER]\n\nAdvanced Steering aims to give vehicles a steering feel thats more intuitive and closer to how real cars behave. It's suited for all kinds of driving including track racing, rallying, drifting etc. and it's recommended to anyone on keyboard or controller regardless of skill level.\n\nThe main features include:\n[LIST]\n[*]Accurate steering limit to utilize the steered wheels' peak grip\n[LIST]\n[*]This is similar to the [I]Understeer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]Natural self-steer tendency, simulating the effects of the car's caster angle\n[LIST]\n[*]This is similar to the [I]Oversteer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]More refined steering feel compared to the stock input system\n[*]Highly customizable settings\n[\/LIST]\nThe principles implemented by this mod are a common way of processing steering input in racing games (both arcade and sim), and they mimic real-life driving mechanics. The goal is to make the steering behave in a way that you otherwise wouldn't get if your input device lacks force-feedback.\n\nThe mod includes a UI app called [I]Advanced Steering Settings[\/I] which lets you fine tune the steering feel to your liking, although the default settings should be fine for most people.\n\n[CENTER][ATTACH]1010196[\/ATTACH] [\/CENTER]\n\nFor more info you can visit the project's [URL='https:\/\/github.com\/adam10603\/BeamNG-Advanced-Steering'][B][U]Github page[\/U][\/B][\/URL] which also has a [URL='https:\/\/github.com\/adam10603\/BeamNG-Advanced-Steering\/blob\/release\/ConfigGuide.md'][B][U]configuration guide[\/U][\/B][\/URL] explaining all the settings, or you can visit the mod's [URL='https:\/\/www.beamng.com\/threads\/advanced-steering-mod.85494\/'][B][U]forum thread[\/U][\/B][\/URL] for discussions.\n\nHave fun!",
     "category_title": "",
     "prefix_title": "",
-    "via": "packed by repo on Fri, 24 Feb 2023 03:00:30 GMT",
+    "via": "packed by repo on Tue, 11 Apr 2023 22:00:57 GMT",
     "hashes": [
         [
-            "scripts\/arcadeSteering\/modScript.lua",
-            "ad2e1a31f856b5c7"
+            "scripts\/advancedSteering\/modScript.lua",
+            "e1324b94ff41f291"
         ],
         [
-            "lua\/vehicle\/extensions\/auto\/arcadeSteering\/arcadeSteering.lua",
-            "195c3927f505ae16"
+            "lua\/vehicle\/extensions\/auto\/advancedSteering\/advancedSteering.lua",
+            "8c890507668c9912"
         ],
         [
-            "lua\/ge\/extensions\/arcadeSteeringGE.lua",
-            "d0ed0341788cc18c"
+            "lua\/ge\/extensions\/advancedSteeringGE.lua",
+            "da52e468127e67ae"
         ],
         [
-            "ui\/modules\/apps\/ArcadeSteering\/app.js",
-            "975bfc868f4a930f"
+            "ui\/modules\/apps\/AdvancedSteeringConfig\/app.js",
+            "a617b63948b25995"
         ],
         [
-            "ui\/modules\/apps\/ArcadeSteering\/app.css",
-            "7e85e1be193d9204"
+            "ui\/modules\/apps\/AdvancedSteeringConfig\/app.css",
+            "ab4f1a33f561b2d1"
         ],
         [
-            "ui\/modules\/apps\/ArcadeSteering\/app.png",
-            "892923e120abef90"
+            "ui\/modules\/apps\/AdvancedSteeringConfig\/app.png",
+            "f7d0c3283e7644c9"
         ],
         [
-            "ui\/modules\/apps\/ArcadeSteering\/app.html",
-            "566b26d8dbd80e54"
+            "ui\/modules\/apps\/AdvancedSteeringConfig\/app.html",
+            "50258438b3cb348a"
         ],
         [
-            "ui\/modules\/apps\/ArcadeSteering\/app.json",
-            "0db5c6db690ba91e"
+            "ui\/modules\/apps\/AdvancedSteeringConfig\/app.json",
+            "df89473fc4d6446d"
         ]
     ]
 }
