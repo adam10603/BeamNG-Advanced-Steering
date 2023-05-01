@@ -35,7 +35,7 @@ The <kbd>Store</kbd> button will write the values from the UI app to the selecte
 The factory presets are as follows:
 
  - **Default**
-   - A balanced preset that should work fine for most driving styles without being too obtrusive. It's somewhere in-between the Responsive and Stable presets.
+   - A balanced preset that should work fine for most driving styles without being too intrusive. It's somewhere in-between the Responsive and Stable presets.
  - **Responsive**
    - A bit more "direct" feeling than the Default preset and provides less assistance overall.
  - **Stable**
