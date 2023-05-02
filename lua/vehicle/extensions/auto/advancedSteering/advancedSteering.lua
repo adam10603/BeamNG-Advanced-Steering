@@ -333,7 +333,7 @@ local steeringCfg               = nil
 local physicsSmoothingWindow    = 80 -- Number of physics updates
 local assistFadeMinSpeed        = 5.0  -- km/h
 local assistFadeMaxSpeed        = 15.0 -- km/h
-local counterFadeRefSpeed       = 60.0 -- km/h
+local counterFadeRefSpeed       = 40.0 -- km/h
 local steeredWheels             = {} -- Indicies of steered wheel(s)
 local rearWheels                = {} -- Indicies of the rearmost wheel(s) by position
 local allWheels                 = {} -- Indicies of all wheels
@@ -353,6 +353,7 @@ local disableMod                = false -- If true, the mod will restore all the
 local initialToggleSetting      = nil
 local isVehicleActive           = false
 local maxTorqueSteer            = 1.0 -- Deg
+local customFilterType          = "ADVANCED_STEERING"
 
 -- =================== State (things that need to be reset)
 
@@ -369,7 +370,7 @@ local lastHardSurfaceVal        = 1 -- 0 if driving offroad, 1 on hard surfaces.
 local selfSteerLPF              = newTemporalSmoothingNonLinear(30, 30, 0) -- Low pass filters for the self-steer force. These are used to let small vibrations through even when the force is otherwise meant to be suppressed.
 local selfSteer2LPF             = newTemporalSmoothingNonLinear(30, 30, 0)
 local counterBlendSpeedCap      = newTemporalSmoothing(6.0, 6.0, 6.0, 0)
-local manualCounterBlendCap     = newTemporalSmoothingNonLinear(10, 10, 0)
+local manualCounterBlendCap     = newTemporalSmoothingNonLinear(10.0, 10.0, 0)
 local steeredTorqueSmoother     = newTemporalSmoothingNonLinear(8, 8, 0)
 local steeredGripSmoother       = newTemporalSmoothingNonLinear(8, 8, 0)
 
@@ -1086,15 +1087,15 @@ local function getBaseSelfSteerForce(sourceWheelData, localHVelKmh, baseSteering
     local avgWheelVelocityAngle2 = clampEased(avgWheelVelocityAngle - inwardAngleSub, 0.0, 180.0, 2.0 / 180.0) * (90.0 / (90.0 - inwardAngleSub)) -- The "2" versions are for turning inwards
     local avgWheelVelXSign       = sign(guardZero(-avgWheelVelFwd.x))
     local correctionExponent     = 1.0 + (1.0 - math.log10(10.0 * (steeringCfg["counterForce.response"] * 0.9 + 0.1))) -- This exponent is for adjusting the responsiveness of the self-steer force based on the setting for it
-    local correctionBase         = signedPow(avgWheelVelXSign * avgWheelVelocityAngle  / 90.0, correctionExponent) * 90.0 / steeringLockDeg -- Base self-steer force
-    local correctionBase2        = signedPow(avgWheelVelXSign * avgWheelVelocityAngle2 / 90.0, correctionExponent) * 90.0 / steeringLockDeg -- Same but when turning inward
+    local correctionBase         = signedPow(avgWheelVelXSign * clamp01(avgWheelVelocityAngle  / 72.0), correctionExponent) * 72.0 / steeringLockDeg -- Base self-steer force
+    local correctionBase2        = signedPow(avgWheelVelXSign * clamp01(avgWheelVelocityAngle2 / 72.0), correctionExponent) * 72.0 / steeringLockDeg -- Same but when turning inward
     local selfSteerCap           = clamp01(steeringCfg["counterForce.maxAngle"] / steeringLockDeg) -- Max self-steer amount
 
     local offroadCorrection      = lerp(offroadSelfSteerMult, 1.0, smoothHardSurfaceVal)
-    local selfSteerStrength      = smoothstep(clamp01(avgWheelVelLen / (counterFadeRefSpeed / 3.6)))
+    local selfSteerStrength      = math.sqrt(clamp01(avgWheelVelLen / (counterFadeRefSpeed / 3.6)))
 
     local dampingStrength        = (1.0 - originalInputAbs) -- Lessens the damping force as more steering input is applied. Damping is much more important when the self-steer force is acting alone with no user input.
-    dampingStrength              = dampingStrength * math.sqrt(selfSteerStrength) -- Also decrease damping at lower speeds, but since the whole thing will be multiplied by `selfSteerStrength` again, I don't quite want it to scale with V^2
+    dampingStrength              = dampingStrength * selfSteerStrength -- Also decrease damping at lower speeds, but since the whole thing will be multiplied by `selfSteerStrength` again, I don't quite want it to scale with V^2
     local dampingForce           = subtractTowardsZero(-yawAngularVel, 0.012, true) * steeringCfg["counterForce.damping"] * 0.25 * 0.85 * dampingStrength -- The damping force is based on the negative yaw angular velocity. A small amount is subtracted towards 0 to filter out some noise.
 
     local selfSteerForce         = selfSteerSmoother:get(clamp(correctionBase, -1.0, 1.0), dt)
@@ -1108,7 +1109,7 @@ end
 
 -- Lowers the input authority setting for keyboard
 local function getEffectiveInputAuthority(filter)
-    return (filter == FILTER_KBD) and (steeringCfg["counterForce.inputAuthority"] * 0.7) or steeringCfg["counterForce.inputAuthority"]
+    return (filter == FILTER_KBD) and (steeringCfg["inputAuthority"] * 0.7) or steeringCfg["inputAuthority"]
 end
 
 -- local gxSmootherTest = RunningAverage:new(100)
@@ -1159,7 +1160,7 @@ local function processInput(e, dt)
 
     -- true if steering outward
     local isCountersteering = (sign(originalInput) ~= sign(guardZero(avgRearWheelXVel)) and originalInputAbs > 1e-6)
-    -- 1 when trying to countersteer, 0 otherwise, smooth. The car has to be sliding at a certain angle before steering outward is considered countersteering. This is used to blend between the inward and outward countersteer force.
+    -- 1 when trying to countersteer, 0 otherwise, smooth. The car has to be sliding at a certain angle before steering outward is considered countersteering. This is used to blend between the inward and outward self-steer force.
     local selfSteerBlend    = counterBlendSpeedCap:get(isCountersteering and inverseLerpClampedEased(5, 12, rearSlipAngleAbs, 0, 1, 0.5) or 0.0, dt)
     -- Same as the above, but starts rising at smaller angles of slide. This is used to blend between the inward and outward steering limit. This allows better manual countersteering in smaller slides compared to using the version above.
     local steeringCapBlend  = manualCounterBlendCap:get(isCountersteering and inverseLerpClampedEased(2, 5, rearSlipAngleAbs, 0, 1, 1) or 0.0, dt)
@@ -1285,12 +1286,12 @@ local function calibrationInterject(e, dt, k, filter)
         return 0
     elseif k == "steering" then
         if calibrationStage == 0 then
-            input.state[k].filter   = FILTER_DIRECT
+            input.state[k].filter   = customFilterType
             input.state[k].angle    = 0
             input.state[k].lockType = 0
             return calibrationHydroCap:get(-1, dt)
         elseif calibrationStage == 1 then
-            input.state[k].filter   = FILTER_DIRECT
+            input.state[k].filter   = customFilterType
             input.state[k].angle    = 0
             input.state[k].lockType = 0
             return calibrationHydroCap:get(1, dt)
@@ -1423,7 +1424,7 @@ local function onEnabled()
                     input.state[k] = M.state[k]
                 else
                     input.state[k].val, unassistedInput = processInput(M.state[k], dt)
-                    input.state[k].filter               = FILTER_DIRECT
+                    input.state[k].filter               = customFilterType
                     input.state[k].angle                = 0
                     input.state[k].lockType             = 0
                 end

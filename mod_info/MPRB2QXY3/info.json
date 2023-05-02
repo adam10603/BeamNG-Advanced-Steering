@@ -6,35 +6,35 @@
             "thumb_filename": "thumbs\/1010150.jpg"
         },
         {
-            "data_filename": "1010196.png",
+            "data_filename": "1016079.png",
             "original_filename": "githubapp.png",
-            "thumb_filename": "thumbs\/1010196.jpg"
+            "thumb_filename": "thumbs\/1016079.jpg"
         }
     ],
     "resource_id": 24284,
-    "current_version_id": 44835,
+    "current_version_id": 45763,
     "download_count": 0,
-    "resource_version_id": 45763,
-    "version_string": "2.5.0",
-    "last_update": 1677227812,
-    "rating_avg": 4.88889,
+    "resource_version_id": 46156,
+    "version_string": "2.6.0",
+    "last_update": 1681284528,
+    "rating_avg": 4.90476,
     "rating_count": 0,
     "rating_sum": 0,
     "resource_category_id": 7,
     "resource_date": 1667383346,
-    "review_count": 19,
+    "review_count": 22,
     "tag_line": "An overhaul of the steering input system for controller and keyboard.",
-    "update_count": 8,
-    "path": "MPRB2QXY3\/44835\/",
+    "update_count": 9,
+    "path": "MPRB2QXY3\/45763\/",
     "filename": "advancedSteering.zip",
     "title": "Advanced Steering",
     "user_id": 474788,
     "username": "lmaoxd",
     "tagid": "MPRB2QXY3",
-    "message": "[I]Formally known as Arcade Steering.[\/I]\n[B][I]\nThis mod is an overhaul of BeamNG's steering input system for controller and keyboard players.[\/I][\/B]\n\n[CENTER][ATTACH]1010150[\/ATTACH][\/CENTER]\n\nAdvanced Steering aims to give vehicles a steering feel thats more intuitive and closer to how real cars behave. It's suited for all kinds of driving including track racing, rallying, drifting etc. and it's recommended to anyone on keyboard or controller regardless of skill level.\n\nThe main features include:\n[LIST]\n[*]Accurate steering limit to utilize the steered wheels' peak grip\n[LIST]\n[*]This is similar to the [I]Understeer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]Natural self-steer tendency, simulating the effects of the car's caster angle\n[LIST]\n[*]This is similar to the [I]Oversteer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]More refined steering feel compared to the stock input system\n[*]Highly customizable settings\n[\/LIST]\nThe principles implemented by this mod are a common way of processing steering input in racing games (both arcade and sim), and they mimic real-life driving mechanics. The goal is to make the steering behave in a way that you otherwise wouldn't get if your input device lacks force-feedback.\n\nThe mod includes a UI app called [I]Advanced Steering Settings[\/I] which lets you fine tune the steering feel to your liking, although the default settings should be fine for most people.\n\n[CENTER][ATTACH]1010196[\/ATTACH] [\/CENTER]\n\nFor more info you can visit the project's [URL='https:\/\/github.com\/adam10603\/BeamNG-Advanced-Steering'][B][U]Github page[\/U][\/B][\/URL] which also has a [URL='https:\/\/github.com\/adam10603\/BeamNG-Advanced-Steering\/blob\/release\/ConfigGuide.md'][B][U]configuration guide[\/U][\/B][\/URL] explaining all the settings, or you can visit the mod's [URL='https:\/\/www.beamng.com\/threads\/advanced-steering-mod.85494\/'][B][U]forum thread[\/U][\/B][\/URL] for discussions.\n\nHave fun!",
+    "message": "[I]Formally known as Arcade Steering.[\/I]\n[B][I]\nThis mod is an overhaul of BeamNG's steering input system for controller and keyboard players.[\/I][\/B]\n\n[CENTER][ATTACH]1010150[\/ATTACH] [\/CENTER]\n\nAdvanced Steering aims to give vehicles a steering feel thats more intuitive and closer to how real cars behave. It's suited for all kinds of driving including track racing, rallying, drifting etc. and it's recommended to anyone on keyboard or controller regardless of skill level. It also includes customizable settings, so everyone can dial in the steering feel they prefer.\n\nThe main features include:\n[LIST]\n[*]Accurate steering limit to utilize the steered wheels' peak grip\n[LIST]\n[*]This is similar to the [I]Understeer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]Natural self-steer tendency, simulating the effects of the car's caster angle\n[LIST]\n[*]This is similar to the [I]Oversteer reduction assistant[\/I] in 0.26+\n[\/LIST]\n[*]More refined steering feel compared to the stock input system\n[*]Highly customizable settings\n[\/LIST]\nThe principles implemented by this mod are a common way of processing steering input in racing games (both arcade and sim), and they mimic real-life driving mechanics. The goal is to make the steering behave in a way that you otherwise wouldn't get if your input device lacks force-feedback.\n\nThe mod includes a UI app called [I]Advanced Steering Settings[\/I] which lets you fine tune the steering feel to your liking, although the default settings should be fine for most people.\n\n[CENTER][ATTACH]1016079[\/ATTACH] [\/CENTER]\n\nFor more info you can visit the project's [URL='https:\/\/github.com\/adam10603\/BeamNG-Advanced-Steering'][B][U]Github page[\/U][\/B][\/URL] which also has a [URL='https:\/\/github.com\/adam10603\/BeamNG-Advanced-Steering\/blob\/release\/ConfigGuide.md'][B][U]configuration guide[\/U][\/B][\/URL] explaining all the settings, or you can visit the mod's [URL='https:\/\/www.beamng.com\/threads\/advanced-steering-mod.85494\/'][B][U]forum thread[\/U][\/B][\/URL] for discussions.\n\nHave fun!",
     "category_title": "",
     "prefix_title": "",
-    "via": "packed by repo on Tue, 11 Apr 2023 22:00:57 GMT",
+    "via": "packed by repo on Fri, 28 Apr 2023 18:03:02 GMT",
     "hashes": [
         [
             "scripts\/advancedSteering\/modScript.lua",
@@ -42,19 +42,55 @@
         ],
         [
             "lua\/vehicle\/extensions\/auto\/advancedSteering\/advancedSteering.lua",
-            "8c890507668c9912"
+            "693c6ea42a96256b"
+        ],
+        [
+            "lua\/ge\/extensions\/advancedSteeringPresetsShipped\/2_Stable.json",
+            "729765213f8228e8"
+        ],
+        [
+            "lua\/ge\/extensions\/advancedSteeringPresetsShipped\/0_Default.json",
+            "30e531dd88be6c00"
+        ],
+        [
+            "lua\/ge\/extensions\/advancedSteeringPresetsShipped\/Custom 1.json",
+            "30e531dd88be6c00"
+        ],
+        [
+            "lua\/ge\/extensions\/advancedSteeringPresetsShipped\/3_Full drift assist.json",
+            "60a80b0bf8ccd99a"
+        ],
+        [
+            "lua\/ge\/extensions\/advancedSteeringPresetsShipped\/Custom 5.json",
+            "30e531dd88be6c00"
+        ],
+        [
+            "lua\/ge\/extensions\/advancedSteeringPresetsShipped\/Custom 4.json",
+            "30e531dd88be6c00"
+        ],
+        [
+            "lua\/ge\/extensions\/advancedSteeringPresetsShipped\/Custom 2.json",
+            "30e531dd88be6c00"
+        ],
+        [
+            "lua\/ge\/extensions\/advancedSteeringPresetsShipped\/1_Responsive.json",
+            "c7eb48d2e486b3ca"
+        ],
+        [
+            "lua\/ge\/extensions\/advancedSteeringPresetsShipped\/Custom 3.json",
+            "30e531dd88be6c00"
         ],
         [
             "lua\/ge\/extensions\/advancedSteeringGE.lua",
-            "da52e468127e67ae"
+            "1512884fb8d79147"
         ],
         [
             "ui\/modules\/apps\/AdvancedSteeringConfig\/app.js",
-            "a617b63948b25995"
+            "d36a3c95532f374c"
         ],
         [
             "ui\/modules\/apps\/AdvancedSteeringConfig\/app.css",
-            "ab4f1a33f561b2d1"
+            "5829435406620ca8"
         ],
         [
             "ui\/modules\/apps\/AdvancedSteeringConfig\/app.png",
@@ -62,11 +98,11 @@
         ],
         [
             "ui\/modules\/apps\/AdvancedSteeringConfig\/app.html",
-            "50258438b3cb348a"
+            "4ab025467ba60c1c"
         ],
         [
             "ui\/modules\/apps\/AdvancedSteeringConfig\/app.json",
-            "df89473fc4d6446d"
+            "73bd5176b4269c75"
         ]
     ]
 }
