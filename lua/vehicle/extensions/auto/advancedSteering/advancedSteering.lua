@@ -331,7 +331,7 @@ end
 
 local steeringCfg               = nil
 local physicsSmoothingWindow    = 80 -- Number of physics updates
-local assistFadeMinSpeed        = 5.0  -- km/h
+local assistFadeMinSpeed        = 1.8  -- km/h
 local assistFadeMaxSpeed        = 15.0 -- km/h
 local counterFadeRefSpeed       = 40.0 -- km/h
 local steeredWheels             = {} -- Indicies of steered wheel(s)
@@ -370,7 +370,7 @@ local lastHardSurfaceVal        = 1 -- 0 if driving offroad, 1 on hard surfaces.
 local selfSteerLPF              = newTemporalSmoothingNonLinear(30, 30, 0) -- Low pass filters for the self-steer force. These are used to let small vibrations through even when the force is otherwise meant to be suppressed.
 local selfSteer2LPF             = newTemporalSmoothingNonLinear(30, 30, 0)
 local counterBlendSpeedCap      = newTemporalSmoothing(6.0, 6.0, 6.0, 0)
-local manualCounterBlendCap     = newTemporalSmoothingNonLinear(10.0, 10.0, 0)
+local manualCounterBlendCap     = newTemporalSmoothingNonLinear(20.0, 20.0, 0)
 local steeredTorqueSmoother     = newTemporalSmoothingNonLinear(8, 8, 0)
 local steeredGripSmoother       = newTemporalSmoothingNonLinear(8, 8, 0)
 
@@ -957,7 +957,7 @@ end
 
 -- Calculates the final steering speed multiplier based on speed, input method, and settings
 local function getSteeringSpeedMult(filter, baseSteeringSpeedMult)
-    local ret = steeringCfg["steeringSpeed"] * ((electrics.values.airspeed / 150.0) + 1.0) -- // TODO add a config value for this or something
+    local ret = steeringCfg["steeringSpeed"] * ((electrics.values.airspeed / 200.0) + 1.0) -- // TODO add a config value for this or something
     ret       = ret * baseSteeringSpeedMult
     if filter == FILTER_KBD then
         ret = ret * 0.7
@@ -1151,9 +1151,12 @@ local function processInput(e, dt)
 
     local avgRearWheelXVel     = average(rearWheelData, fWheelVehXVel) or 0.0
     local steeredSlipAngle     = math.deg(average(steeredWheelData, fWheelSlipAngle) or 0)
-    local rearSlipAngle        = math.deg((average(rearWheelData, fWheelSlipAngle) or 0))
+    local _rearSlipRaw         = average(rearWheelData, fWheelSlipAngle)
+    local rearSlipAngle        = math.deg(_rearSlipRaw or 0)
     local steeredSlipAngleAbs  = math.abs(steeredSlipAngle)
     local rearSlipAngleAbs     = math.abs(rearSlipAngle)
+    local rearSlipAngle2       = math.deg(_rearSlipRaw or (-travelDirectionRad)) -- Uses the travel direction as a backup in case the rear slip angle is not available
+    local rearSlipAngleAbs2    = math.abs(rearSlipAngle2) -- Uses the travel direction as a backup in case the rear slip angle is not available
 
     -- 1 if at least one of the steered wheels is grounded, 0 otherwise. Basically a boolean with smoothing to prevent an instant transition.
     local groundedSmooth    = getSteeredWheelGroundedFactor(steeredWheelData, dt)
@@ -1161,9 +1164,9 @@ local function processInput(e, dt)
     -- true if steering outward
     local isCountersteering = (sign(originalInput) ~= sign(guardZero(avgRearWheelXVel)) and originalInputAbs > 1e-6)
     -- 1 when trying to countersteer, 0 otherwise, smooth. The car has to be sliding at a certain angle before steering outward is considered countersteering. This is used to blend between the inward and outward self-steer force.
-    local selfSteerBlend    = counterBlendSpeedCap:get(isCountersteering and inverseLerpClampedEased(5, 12, rearSlipAngleAbs, 0, 1, 0.5) or 0.0, dt)
+    local selfSteerBlend    = counterBlendSpeedCap:get(isCountersteering and inverseLerpClampedEased(5, 12, rearSlipAngleAbs2, 0, 1, 0.5) or 0.0, dt)
     -- Same as the above, but starts rising at smaller angles of slide. This is used to blend between the inward and outward steering limit. This allows better manual countersteering in smaller slides compared to using the version above.
-    local steeringCapBlend  = manualCounterBlendCap:get(isCountersteering and inverseLerpClampedEased(2, 5, rearSlipAngleAbs, 0, 1, 1) or 0.0, dt)
+    local steeringCapBlend  = manualCounterBlendCap:get(isCountersteering and inverseLerpClampedEased(2, 5, rearSlipAngleAbs2, 0, 1, 1) or 0.0, dt)
 
     -- 0 if driving offroad, 1 on hard surfaces. Only changed if more than half the wheels change surface type, frozen if at least half the wheels are airborne.
     local hardSurfaceVal        = getHardSurfaceVal(allWheelData, math.floor(#allWheelData * 0.5) + 1, lastHardSurfaceVal)--getHardSurfaceVal(allWheelData, lastHardSurfaceVal)
@@ -1203,21 +1206,21 @@ local function processInput(e, dt)
         return limit, _selfSteerForce
     end
 
-    local counterLimitOffset = clamp(1 - rearSlipAngleAbs / 180.0, 0.5, 1.0) * steeringCfg["countersteerLimitOffset"]
-
     -- Returns the steering limit and self-steer force that would be in effect if the player was countersteering
     local function processInputCounter()
-        local manualCounterCap = inverseLerpClamped(0, math.max(steeringLockDeg, 8), rearSlipAngleAbs + counterLimitOffset, 0, 1) -- // FIXME travel direction??
-        manualCounterCap       = clamp01(manualCounterCap - (sign(originalInput) * selfSteerForce))
+        local counterLimitOffset = clamp(1 - rearSlipAngleAbs2 / 180.0, 0.5, 1.0) * steeringCfg["countersteerLimitOffset"]
+        local manualCounterCap   = inverseLerpClamped(0, math.max(steeringLockDeg, 8), rearSlipAngleAbs2 + counterLimitOffset, 0, 1)
+        manualCounterCap         = clamp01(manualCounterCap - (sign(originalInput) * selfSteerForce))
         return manualCounterCap, selfSteerForce
     end
 
     -- Calculating the limit and self-steer force both as if the player was turning inward or coutersteering. We'll lerp between them as needed.
     local capInward, selfSteerInward   = processInputInward()
     local capOutward, selfSteerOutward = processInputCounter()
+    capOutward                         = math.max(capOutward, capInward)
 
     -- Final steering limit that will be applied
-    local effectiveCap = lerp(capInward, math.max(capOutward, capInward), steeringCapBlend) + getTorqueSteerAmount(steeredWheelData, dt)
+    local effectiveCap = lerp(capInward, capOutward, steeringCapBlend) + getTorqueSteerAmount(steeredWheelData, dt)
 
     -- Final self-steer force that will be applied
     local effectiveSelfSteerForce = lerp(selfSteerInward, selfSteerOutward, selfSteerBlend)
@@ -1420,14 +1423,14 @@ local function onEnabled()
             -- if angle > 0 and k == "steering" then e.filter = FILTER_DIRECT end -- enforce direct filter if user has chosen an angle for steering binding
 
             if k == "steering" then
-                if not (e.filter == FILTER_PAD or e.filter == FILTER_KBD or e.filter == FILTER_KBD2) then
-                    input.state[k] = M.state[k]
-                else
+                if e.filter == FILTER_PAD or e.filter == FILTER_KBD or e.filter == FILTER_KBD2 then
                     input.state[k].val, unassistedInput = processInput(M.state[k], dt)
-                    input.state[k].filter               = customFilterType
-                    input.state[k].angle                = 0
-                    input.state[k].lockType             = 0
+                else
+                    input.state[k].val, unassistedInput = M.state[k].val, M.state[k].val
                 end
+                input.state[k].filter   = customFilterType
+                input.state[k].angle    = 0
+                input.state[k].lockType = 0
             end
         end
 
