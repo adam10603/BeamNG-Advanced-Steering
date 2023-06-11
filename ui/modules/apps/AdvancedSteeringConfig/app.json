@@ -1,7 +1,7 @@
 {
     "name": "Advanced Steering Config",
     "author": "Adam",
-    "version": "2.6.1",
+    "version": "2.7.0",
     "description": "Settings for the Advanced Steering mod",
     "directive": "advancedSteeringConfig",
     "types": [
@@ -18,7 +18,7 @@
 
         "min-height": "200px",
         "height": "260px",
-        "max-height": "550px"
+        "max-height": "570px"
     },
     "preserveAspectRatio": false
 }
