@@ -1,7 +1,7 @@
 {
     "name": "Advanced Steering Config",
     "author": "Adam",
-    "version": "2.7.0",
+    "version": "2.7",
     "description": "Settings for the Advanced Steering mod",
     "directive": "advancedSteeringConfig",
     "types": [
